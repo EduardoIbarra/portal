@@ -15,10 +15,21 @@ export function useOrders() {
       try {
         setLoading(true)
         
-        // In a real app, we'd filter by the current user's client_id
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+
+        const { data: profile } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+        
+        const clientId = profile?.client_id || user.id
+
         const { data, error } = await supabase
           .from('orders')
-          .select('*, hospitals(name)')
+          .select('*')
+          .eq('client_id', clientId)
           .order('created_at', { ascending: false })
 
         if (error) throw error

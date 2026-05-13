@@ -14,8 +14,42 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (!error) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+    
+    if (!error && data.user) {
+      const user = data.user
+      
+      // 1. Ensure client record exists (required for orders)
+      // We check first to avoid unnecessary writes if columns differ from our guess
+      const { data: existingClient } = await supabase
+        .from('clients')
+        .select('id')
+        .eq('id', user.id)
+        .single()
+
+      if (!existingClient) {
+        await supabase.from('clients').insert({
+          id: user.id,
+          name: user.user_metadata.full_name || user.email || 'New Client',
+        })
+      }
+
+      // 2. Ensure user_profile record exists
+      const { data: existingProfile } = await supabase
+        .from('user_profiles')
+        .select('id')
+        .eq('id', user.id)
+        .single()
+
+      if (!existingProfile) {
+        await supabase.from('user_profiles').insert({
+          id: user.id,
+          full_name: user.user_metadata.full_name,
+          avatar_url: user.user_metadata.avatar_url,
+          role: 'customer'
+        })
+      }
+
       return NextResponse.redirect(`${origin}${next}`)
     }
   }

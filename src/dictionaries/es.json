@@ -61,7 +61,13 @@
     "processing": "PROCESANDO...",
     "activeNow": "distribuidores activos ahora",
     "fulfillment": "Cumplimiento Directo de Arthromed",
-    "success": "¡Pedido realizado con éxito!"
+    "success": "¡Pedido realizado con éxito!",
+    "successModal": {
+      "title": "¡Pedido Confirmado!",
+      "message": "Tu pedido ha sido procesado exitosamente y ya estamos trabajando en él.",
+      "viewOrder": "Ver Detalle del Pedido",
+      "continue": "Seguir Comprando"
+    }
   },
   "orders": {
     "title": "Historial de Pedidos",
@@ -70,6 +76,19 @@
     "totalOrders": "Pedidos Totales",
     "inTransit": "En Tránsito",
     "delivered": "Entregado",
+    "detail": {
+      "title": "Detalle del Pedido",
+      "back": "Volver al historial",
+      "items": "Productos",
+      "summary": "Resumen de Pago",
+      "subtotal": "Subtotal",
+      "tax": "IVA (16%)",
+      "total": "Total",
+      "status": "Estado del Pedido",
+      "date": "Fecha de creación",
+      "quantity": "cantidad",
+      "price": "precio"
+    },
     "table": {
       "orderId": "ID de Pedido",
       "date": "Fecha",

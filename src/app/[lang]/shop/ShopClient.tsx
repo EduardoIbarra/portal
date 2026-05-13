@@ -22,6 +22,8 @@ export default function ShopClient({ dict }: { dict: any }) {
   const [cart, setCart] = useState<any[]>([])
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isOrdering, setIsOrdering] = useState(false)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [lastOrderId, setLastOrderId] = useState<string | null>(null)
   const { products, loading, error } = useProducts()
   const [searchTerm, setSearchTerm] = useState('')
   const supabase = createClient()
@@ -65,10 +67,20 @@ export default function ShopClient({ dict }: { dict: any }) {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('User not authenticated')
 
+      // Get the profile to find the associated client_id
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+
+      // If profile has no client_id, we fallback to user.id (which we ensure exists in the callback)
+      const clientId = profile?.client_id || user.id
+
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
-          client_id: user.id,
+          client_id: clientId,
           total_amount: subtotal * 1.16,
           status: 'pending',
           currency: 'MXN'
@@ -92,7 +104,8 @@ export default function ShopClient({ dict }: { dict: any }) {
 
       if (itemsError) throw itemsError
 
-      alert(dict.shop.success)
+      setLastOrderId(order.id)
+      setShowSuccessModal(true)
       setCart([])
       setIsCartOpen(false)
     } catch (err: any) {
@@ -103,7 +116,8 @@ export default function ShopClient({ dict }: { dict: any }) {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 md:gap-8 relative animate-fade-in">
+    <>
+      <div className="flex flex-col lg:flex-row gap-6 md:gap-8 relative animate-fade-in">
       <div className="flex-1 space-y-6 md:space-y-10">
         <header className="flex items-center justify-between animate-slide-left gap-4">
           <div className="min-w-0">
@@ -334,6 +348,46 @@ export default function ShopClient({ dict }: { dict: any }) {
 
       </aside>
     </div>
+
+    {/* Success Modal */}
+    {showSuccessModal && (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-dark/60 backdrop-blur-md animate-in fade-in duration-500" onClick={() => setShowSuccessModal(false)} />
+        <div className="bg-surface w-full max-w-md rounded-[2.5rem] p-8 md:p-12 relative z-10 shadow-2xl animate-in zoom-in-95 slide-in-from-bottom-10 duration-500 ease-out border border-border">
+          <div className="flex flex-col items-center text-center space-y-6 md:space-y-8">
+            <div className="w-24 h-24 md:w-32 md:h-32 rounded-[2.5rem] bg-success-bg flex items-center justify-center text-success animate-bounce shadow-2xl shadow-success/20">
+              <CheckCircle2 className="w-12 h-12 md:w-16 md:h-16" strokeWidth={3} />
+            </div>
+            
+            <div className="space-y-2 md:space-y-4">
+              <h2 className="text-3xl md:text-4xl font-black text-dark tracking-tighter">{dict.shop.successModal.title}</h2>
+              <p className="text-dark-500 font-medium leading-relaxed">
+                {dict.shop.successModal.message}
+              </p>
+              <div className="inline-block px-4 py-2 rounded-xl bg-surface-2 border border-border mt-4">
+                <span className="text-[10px] font-black uppercase tracking-widest text-dark-300">ID: #{lastOrderId?.slice(0, 8).toUpperCase()}</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col w-full gap-3 md:gap-4 pt-4">
+              <a 
+                href={`/es/orders/${lastOrderId}`}
+                className="btn-primary w-full py-4 md:py-5 rounded-2xl !text-base md:!text-lg !font-black shadow-xl shadow-brand-500/20"
+              >
+                {dict.shop.successModal.viewOrder}
+              </a>
+              <button 
+                onClick={() => setShowSuccessModal(false)}
+                className="w-full py-4 md:py-5 rounded-2xl text-dark-500 font-black text-base md:text-lg hover:bg-surface-2 transition-all"
+              >
+                {dict.shop.successModal.continue}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+  </>
   )
 }
 

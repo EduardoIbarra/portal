@@ -12,10 +12,12 @@ import {
   Loader2,
   AlertCircle
 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useOrders } from '@/hooks/useOrders'
 import { cn } from '@/lib/utils'
 
 export default function OrdersClient({ dict }: { dict: any }) {
+  const router = useRouter()
   const { orders, loading, error } = useOrders()
 
   const statusMap = {
@@ -97,7 +99,6 @@ export default function OrdersClient({ dict }: { dict: any }) {
                 <th className="px-4 md:px-10 py-4 md:py-6 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-dark-300">{dict.orders.table.destination}</th>
                 <th className="px-4 md:px-10 py-4 md:py-6 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-dark-300">{dict.orders.table.status}</th>
                 <th className="px-4 md:px-10 py-4 md:py-6 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-dark-300 text-right">{dict.orders.table.total}</th>
-                <th className="px-4 md:px-10 py-4 md:py-6"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border-2">
@@ -111,7 +112,11 @@ export default function OrdersClient({ dict }: { dict: any }) {
                 orders.map((order) => {
                   const status = statusMap[order.status as keyof typeof statusMap] || statusMap.pending
                   return (
-                    <tr key={order.id} className="hover:bg-brand-50/30 transition-colors group cursor-pointer">
+                    <tr 
+                      key={order.id} 
+                      onClick={() => router.push(`/es/orders/${order.id}`)}
+                      className="hover:bg-brand-50/30 transition-colors group cursor-pointer"
+                    >
                       <td className="px-4 md:px-10 py-5 md:py-8">
                         <span className="font-black text-xs md:text-sm text-dark tracking-tight">#{order.id.slice(0, 8).toUpperCase()}</span>
                         <div className="sm:hidden mt-0.5">
@@ -139,11 +144,6 @@ export default function OrdersClient({ dict }: { dict: any }) {
                         <span className="font-black text-dark text-base md:text-lg font-mono">
                           ${order.total_amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                         </span>
-                      </td>
-                      <td className="px-2 md:px-10 py-5 md:py-8 text-right">
-                        <button className="p-2 md:p-3 hover:bg-brand-500 hover:text-white rounded-lg md:rounded-xl transition-all text-dark-100 group-hover:scale-110">
-                          <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
-                        </button>
                       </td>
                     </tr>
                   )
