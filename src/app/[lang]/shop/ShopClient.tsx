@@ -46,7 +46,6 @@ export default function ShopClient({ dict }: { dict: any }) {
       }
       return [...prev, { ...product, qty: 1 }]
     })
-    setIsCartOpen(true); // Open cart after adding product
   }
 
   const updateQty = (id: string, delta: number) => {
