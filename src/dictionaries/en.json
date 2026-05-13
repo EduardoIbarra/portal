@@ -1,0 +1,122 @@
+{
+  "common": {
+    "welcome": "Welcome back",
+    "distributor": "Distributor",
+    "dashboard": "Dashboard",
+    "prices": "Prices",
+    "distributorLetter": "Distributor Letter",
+    "shop": "Shop",
+    "orders": "Orders",
+    "settings": "Settings",
+    "logout": "Logout",
+    "collapse": "COLLAPSE",
+    "viewAll": "View all",
+    "search": "Search...",
+    "loading": "Loading...",
+    "error": "Error",
+    "download": "Download Now",
+    "quickLinks": "Quick Links",
+    "signIn": "Sign In",
+    "email": "Email Address",
+    "password": "Password",
+    "noAccount": "Don't have an account?",
+    "contactManager": "Contact your manager",
+    "securePortal": "Secure Enterprise Portal",
+    "portalAccess": "Customer Portal Access",
+    "continueWithGoogle": "Continue with Google",
+    "onlyArthromedEmails": "Restricted access only to authorized personnel with @arthromed.com.mx emails"
+  },
+  "dashboard": {
+    "greeting": "Welcome back, {name}",
+    "subtitle": "Here's what's happening with your account today.",
+    "stats": {
+      "activeOrders": "Active Orders",
+      "productsAuthorized": "Products Authorized",
+      "pendingLetters": "Pending Letters",
+      "currentSavings": "Current Savings",
+      "thisWeek": "this week",
+      "allActive": "All active",
+      "expiringSoon": "Expiring soon",
+      "hospitalAgreements": "Hospital agreements"
+    },
+    "recentOrders": "Recent Orders",
+    "orderNumber": "Order",
+    "hospital": "Hospital Central",
+    "inTransit": "In Transit",
+    "needLetter": "Need a new Letter?",
+    "letterDescription": "Request or download your updated authorization letter for your customers."
+  },
+  "shop": {
+    "title": "Supply Store",
+    "subtitle": "Direct self-service ordering for your inventory.",
+    "failedLoad": "Failed to load catalog",
+    "unitPrice": "Unit Price",
+    "cart": "Cart",
+    "cartEmpty": "Your cart is empty",
+    "startAdding": "Start adding products from the store",
+    "subtotal": "Subtotal",
+    "tax": "Tax (16%)",
+    "totalAmount": "Total Amount",
+    "placeOrder": "PLACE ORDER",
+    "processing": "PROCESSING...",
+    "activeNow": "distributors active now",
+    "fulfillment": "Direct Arthromed Fulfillment",
+    "success": "Order placed successfully!"
+  },
+  "orders": {
+    "title": "Order History",
+    "subtitle": "Track and manage your supply orders.",
+    "searchPlaceholder": "Search orders...",
+    "totalOrders": "Total Orders",
+    "inTransit": "In Transit",
+    "delivered": "Delivered",
+    "table": {
+      "orderId": "Order ID",
+      "date": "Date",
+      "destination": "Destination",
+      "status": "Status",
+      "total": "Total",
+      "noOrders": "No orders found in your history.",
+      "generalInventory": "General Inventory"
+    },
+    "status": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    }
+  },
+  "letter": {
+    "title": "Distributor Letter",
+    "subtitle": "Manage your official authorization to represent Arthromed products.",
+    "activeVerified": "Active & Verified",
+    "statusTitle": "Authorization Status",
+    "statusDescription": "Your account is fully authorized to distribute Arthromed medical equipment for the fiscal year 2026.",
+    "issuedOn": "Issued On",
+    "expiresOn": "Expires On",
+    "downloadPdf": "Download Formal Letter (PDF)",
+    "noticeTitle": "Notice",
+    "noticeDescription": "If you require a specific letter addressed to a particular hospital for a tender process, please contact your account manager.",
+    "preview": "Preview of the official Arthromed Authorization Certificate"
+  },
+  "prices": {
+    "title": "Price List",
+    "subtitle": "Manage and view your customized pricing and hospital agreements.",
+    "searchPlaceholder": "Search products...",
+    "viewPricesFor": "View prices for",
+    "distributorBase": "Distributor (Base)",
+    "infoNote": "Prices are shown in MXN. Hospital prices include special convenio discounts.",
+    "table": {
+      "productDetails": "Product Details",
+      "category": "Category",
+      "basePrice": "Base Price",
+      "agreementPrice": "Agreement Price",
+      "noProducts": "No products found matching your search.",
+      "noSku": "No SKU",
+      "general": "General",
+      "specialAgreement": "Special Agreement",
+      "noSpecialPrice": "No special price"
+    }
+  }
+}

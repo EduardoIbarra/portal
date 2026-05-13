@@ -1,0 +1,122 @@
+{
+  "common": {
+    "welcome": "欢迎回来",
+    "distributor": "分销商",
+    "dashboard": "仪表板",
+    "prices": "价格",
+    "distributorLetter": "分销商授权书",
+    "shop": "商店",
+    "orders": "订单",
+    "settings": "设置",
+    "logout": "登出",
+    "collapse": "收起",
+    "viewAll": "查看全部",
+    "search": "搜索...",
+    "loading": "加载中...",
+    "error": "错误",
+    "download": "立即下载",
+    "quickLinks": "快速链接",
+    "signIn": "登录",
+    "email": "电子邮件地址",
+    "password": "密码",
+    "noAccount": "还没有账户？",
+    "contactManager": "联系您的经理",
+    "securePortal": "安全企业门户",
+    "portalAccess": "客户门户访问",
+    "continueWithGoogle": "使用 Google 继续",
+    "onlyArthromedEmails": "仅限持有 @arthromed.com.mx 邮箱的授权人员访问"
+  },
+  "dashboard": {
+    "greeting": "欢迎回来，{name}",
+    "subtitle": "这是您账户今天的动态。",
+    "stats": {
+      "activeOrders": "活跃订单",
+      "productsAuthorized": "已授权产品",
+      "pendingLetters": "待处理授权书",
+      "currentSavings": "当前节省",
+      "thisWeek": "本周",
+      "allActive": "全部激活",
+      "expiringSoon": "即将过期",
+      "hospitalAgreements": "医院协议"
+    },
+    "recentOrders": "最近订单",
+    "orderNumber": "订单",
+    "hospital": "中心医院",
+    "inTransit": "运输中",
+    "needLetter": "需要新的授权书吗？",
+    "letterDescription": "为您的客户请求或下载最新的授权书。"
+  },
+  "shop": {
+    "title": "供应商店",
+    "subtitle": "为您的库存直接进行自助订购。",
+    "failedLoad": "无法加载目录",
+    "unitPrice": "单价",
+    "cart": "购物车",
+    "cartEmpty": "您的购物车是空的",
+    "startAdding": "开始从商店添加产品",
+    "subtotal": "小计",
+    "tax": "税 (16%)",
+    "totalAmount": "总金额",
+    "placeOrder": "下订单",
+    "processing": "处理中...",
+    "activeNow": "个分销商正在线",
+    "fulfillment": "Arthromed 直接发货",
+    "success": "订单下单成功！"
+  },
+  "orders": {
+    "title": "订单历史",
+    "subtitle": "追踪和管理您的供应订单。",
+    "searchPlaceholder": "搜索订单...",
+    "totalOrders": "总订单数",
+    "inTransit": "运输中",
+    "delivered": "已送达",
+    "table": {
+      "orderId": "订单 ID",
+      "date": "日期",
+      "destination": "目的地",
+      "status": "状态",
+      "total": "总计",
+      "noOrders": "历史记录中未找到订单。",
+      "generalInventory": "通用库存"
+    },
+    "status": {
+      "pending": "待处理",
+      "processing": "处理中",
+      "shipped": "已发货",
+      "delivered": "已送达",
+      "cancelled": "已取消"
+    }
+  },
+  "letter": {
+    "title": "分销商授权书",
+    "subtitle": "管理您代理 Arthromed 产品的官方授权。",
+    "activeVerified": "已激活并验证",
+    "statusTitle": "授权状态",
+    "statusDescription": "您的账户已获得 2026 财年分销 Arthromed 医疗设备的完整授权。",
+    "issuedOn": "签发日期",
+    "expiresOn": "有效期至",
+    "downloadPdf": "下载正式授权书 (PDF)",
+    "noticeTitle": "注意",
+    "noticeDescription": "如果您在招标过程中需要针对特定医院的特定授权书，请联系您的客户经理。",
+    "preview": "Arthromed 官方授权证书预览"
+  },
+  "prices": {
+    "title": "价格表",
+    "subtitle": "管理和查看您的自定义定价和医院协议。",
+    "searchPlaceholder": "搜索产品...",
+    "viewPricesFor": "查看价格：",
+    "distributorBase": "分销商（基础）",
+    "infoNote": "价格以墨西哥比索 (MXN) 显示。医院价格包含特殊协议折扣。",
+    "table": {
+      "productDetails": "产品详情",
+      "category": "类别",
+      "basePrice": "基础价格",
+      "agreementPrice": "协议价格",
+      "noProducts": "未找到匹配搜索的产品。",
+      "noSku": "无 SKU",
+      "general": "通用",
+      "specialAgreement": "特殊协议",
+      "noSpecialPrice": "无特殊价格"
+    }
+  }
+}

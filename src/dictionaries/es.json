@@ -1,0 +1,122 @@
+{
+  "common": {
+    "welcome": "Bienvenido de nuevo",
+    "distributor": "Distribuidor",
+    "dashboard": "Panel de Control",
+    "prices": "Precios",
+    "distributorLetter": "Carta de Distribuidor",
+    "shop": "Tienda",
+    "orders": "Pedidos",
+    "settings": "Configuración",
+    "logout": "Cerrar sesión",
+    "collapse": "COLAPSAR",
+    "viewAll": "Ver todo",
+    "search": "Buscar...",
+    "loading": "Cargando...",
+    "error": "Error",
+    "download": "Descargar ahora",
+    "quickLinks": "Enlaces rápidos",
+    "signIn": "Iniciar Sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "noAccount": "¿No tienes una cuenta?",
+    "contactManager": "Contacta a tu gerente",
+    "securePortal": "Portal Empresarial Seguro",
+    "portalAccess": "Acceso al Portal de Clientes",
+    "continueWithGoogle": "Continuar con Google",
+    "onlyArthromedEmails": "Acceso restringido únicamente a personal autorizado con correos @arthromed.com.mx"
+  },
+  "dashboard": {
+    "greeting": "Bienvenido de nuevo, {name}",
+    "subtitle": "Esto es lo que está pasando con tu cuenta hoy.",
+    "stats": {
+      "activeOrders": "Pedidos Activos",
+      "productsAuthorized": "Productos Autorizados",
+      "pendingLetters": "Cartas Pendientes",
+      "currentSavings": "Ahorros Actuales",
+      "thisWeek": "esta semana",
+      "allActive": "Todos activos",
+      "expiringSoon": "Expira pronto",
+      "hospitalAgreements": "Convenios hospitalarios"
+    },
+    "recentOrders": "Pedidos Recientes",
+    "orderNumber": "Pedido",
+    "hospital": "Hospital Central",
+    "inTransit": "En Tránsito",
+    "needLetter": "¿Necesitas una nueva Carta?",
+    "letterDescription": "Solicita o descarga tu carta de autorización actualizada para tus clientes."
+  },
+  "shop": {
+    "title": "Tienda de Suministros",
+    "subtitle": "Pedidos directos de autoservicio para tu inventario.",
+    "failedLoad": "Error al cargar el catálogo",
+    "unitPrice": "Precio Unitario",
+    "cart": "Carrito",
+    "cartEmpty": "Tu carrito está vacío",
+    "startAdding": "Comienza a añadir productos desde la tienda",
+    "subtotal": "Subtotal",
+    "tax": "Impuesto (16%)",
+    "totalAmount": "Monto Total",
+    "placeOrder": "REALIZAR PEDIDO",
+    "processing": "PROCESANDO...",
+    "activeNow": "distribuidores activos ahora",
+    "fulfillment": "Cumplimiento Directo de Arthromed",
+    "success": "¡Pedido realizado con éxito!"
+  },
+  "orders": {
+    "title": "Historial de Pedidos",
+    "subtitle": "Rastrea y gestiona tus pedidos de suministros.",
+    "searchPlaceholder": "Buscar pedidos...",
+    "totalOrders": "Pedidos Totales",
+    "inTransit": "En Tránsito",
+    "delivered": "Entregado",
+    "table": {
+      "orderId": "ID de Pedido",
+      "date": "Fecha",
+      "destination": "Destino",
+      "status": "Estado",
+      "total": "Total",
+      "noOrders": "No se encontraron pedidos en tu historial.",
+      "generalInventory": "Inventario General"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "processing": "Procesando",
+      "shipped": "Enviado",
+      "delivered": "Entregado",
+      "cancelled": "Cancelado"
+    }
+  },
+  "letter": {
+    "title": "Carta de Distribuidor",
+    "subtitle": "Gestiona tu autorización oficial para representar los productos de Arthromed.",
+    "activeVerified": "Activo y Verificado",
+    "statusTitle": "Estado de Autorización",
+    "statusDescription": "Tu cuenta está plenamente autorizada para distribuir equipo médico de Arthromed para el año fiscal 2026.",
+    "issuedOn": "Emitido el",
+    "expiresOn": "Expira el",
+    "downloadPdf": "Descargar Carta Formal (PDF)",
+    "noticeTitle": "Aviso",
+    "noticeDescription": "Si requieres una carta específica dirigida a un hospital particular para un proceso de licitación, por favor contacta a tu gerente de cuenta.",
+    "preview": "Vista previa del Certificado de Autorización oficial de Arthromed"
+  },
+  "prices": {
+    "title": "Lista de Precios",
+    "subtitle": "Gestiona y visualiza tus precios personalizados y convenios hospitalarios.",
+    "searchPlaceholder": "Buscar productos...",
+    "viewPricesFor": "Ver precios para",
+    "distributorBase": "Distribuidor (Base)",
+    "infoNote": "Los precios se muestran en MXN. Los precios de hospital incluyen descuentos especiales por convenio.",
+    "table": {
+      "productDetails": "Detalles del Producto",
+      "category": "Categoría",
+      "basePrice": "Precio Base",
+      "agreementPrice": "Precio de Convenio",
+      "noProducts": "No se encontraron productos que coincidan con tu búsqueda.",
+      "noSku": "Sin SKU",
+      "general": "General",
+      "specialAgreement": "Convenio Especial",
+      "noSpecialPrice": "Sin precio especial"
+    }
+  }
+}
