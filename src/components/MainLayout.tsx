@@ -9,11 +9,13 @@ import { cn } from '@/lib/utils'
 export function MainLayout({ 
   children, 
   lang, 
-  dict 
+  dict,
+  user
 }: { 
   children: React.ReactNode, 
   lang: string, 
-  dict: any 
+  dict: any,
+  user: any
 }) {
   const pathname = usePathname()
   const isLoginPage = pathname?.includes('/login')
@@ -34,7 +36,7 @@ export function MainLayout({
         "flex-1 flex flex-col transition-all duration-300 min-w-0",
         !isLoginPage ? (collapsed ? "lg:ml-16" : "lg:ml-60") : "ml-0"
       )}>
-        {!isLoginPage && <Header lang={lang} dict={dict} />}
+        {!isLoginPage && <Header lang={lang} dict={dict} user={user} />}
         
         <main className={cn(
           "flex-1 transition-all duration-300",

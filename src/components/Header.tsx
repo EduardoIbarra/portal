@@ -4,7 +4,10 @@ import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { Bell, Search } from 'lucide-react'
 import Link from 'next/link'
 
-export default function Header({ lang, dict }: { lang: string, dict: any }) {
+export default function Header({ lang, dict, user }: { lang: string, dict: any, user: any }) {
+  const userName = user?.user_metadata?.full_name || user?.user_metadata?.name || 'Distributor'
+  const initial = userName.charAt(0).toUpperCase()
+
   return (
     <header
       className="sticky top-0 z-20 flex items-center gap-2 md:gap-4 px-4 md:px-6 py-2.5 md:py-3 bg-white border-b border-blue-100"
@@ -42,8 +45,9 @@ export default function Header({ lang, dict }: { lang: string, dict: any }) {
         <div
           className="w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-brand-500/20 flex-shrink-0"
           style={{ background: '#0763a9' }}
+          title={userName}
         >
-          D
+          {initial}
         </div>
       </div>
     </header>

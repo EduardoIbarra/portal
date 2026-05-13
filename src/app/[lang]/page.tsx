@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { getDictionary, Locale } from '@/lib/get-dictionary'
 import { cn } from '@/lib/utils'
+import { getUser } from '@/lib/auth-utils'
 
 export default async function Dashboard({
   params,
@@ -16,12 +17,14 @@ export default async function Dashboard({
 }) {
   const { lang } = await params
   const dict = await getDictionary(lang as Locale)
+  const user = await getUser()
+  const userName = user?.user_metadata?.full_name || user?.user_metadata?.name || dict.common.distributor
 
   return (
     <div className="space-y-6 md:space-y-10 animate-fade-in">
       <header className="animate-slide-left">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-dark leading-tight">
-          {dict.common.welcome}, <span className="gradient-text">{dict.common.distributor}</span>
+          {dict.common.welcome}, <span className="gradient-text">{userName}</span>
         </h1>
         <p className="text-dark-500 mt-1 md:mt-2 text-base md:text-lg font-medium">
           {dict.dashboard.subtitle}

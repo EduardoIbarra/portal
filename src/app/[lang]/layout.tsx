@@ -2,6 +2,7 @@ import { Inter } from "next/font/google"
 import "../globals.css"
 import { getDictionary, Locale } from "@/lib/get-dictionary"
 import { MainLayout } from "@/components/MainLayout"
+import { getUser } from "@/lib/auth-utils"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -18,11 +19,12 @@ export default async function RootLayout({
 }) {
   const { lang } = await params
   const dict = await getDictionary(lang as Locale)
+  const user = await getUser()
 
   return (
     <html lang={lang}>
       <body className={inter.className}>
-        <MainLayout lang={lang} dict={dict}>
+        <MainLayout lang={lang} dict={dict} user={user}>
           {children}
         </MainLayout>
       </body>
