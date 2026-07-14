@@ -205,6 +205,10 @@ export default function TrackingDetailClient({ id, dict }: { id: string, dict: a
   }
 
   const currentStepIdx = getCurrentStepIndex()
+  const deliveredUpdate = updates.find(u => u.status === 'delivered')
+  const isDelivered = !!deliveredUpdate
+  const deliveryDate = deliveredUpdate ? (deliveredUpdate.event_date || deliveredUpdate.created_at) : null
+  const displayDate = isDelivered ? deliveryDate : tracking?.estimated_delivery
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
@@ -246,17 +250,26 @@ export default function TrackingDetailClient({ id, dict }: { id: string, dict: a
       </header>
 
       {/* UPS-style Prominent Estimated Delivery Card */}
-      {tracking?.estimated_delivery && (
-        <div className="card rounded-[2rem] p-8 bg-gradient-to-br from-brand-500 via-brand-600 to-indigo-700 text-white border-none shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden relative group">
+      {displayDate && (
+        <div className={cn(
+          "card rounded-[2rem] p-8 text-white border-none shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden relative group",
+          isDelivered 
+            ? "bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700" 
+            : "bg-gradient-to-br from-brand-500 via-brand-600 to-indigo-700"
+        )}>
           <div className="absolute right-0 bottom-0 opacity-10 translate-x-10 translate-y-10 pointer-events-none transition-transform group-hover:scale-110 duration-700">
             <Truck className="w-64 h-64" />
           </div>
           <div className="space-y-1 relative z-10">
-            <span className="text-white/80 text-[10px] font-black uppercase tracking-[0.2em]">Fecha de Entrega Estimada</span>
+            <span className="text-white/80 text-[10px] font-black uppercase tracking-[0.2em]">
+              {isDelivered ? 'Fecha de Entrega' : 'Fecha de Entrega Estimada'}
+            </span>
             <h2 className="text-3xl md:text-5xl font-black tracking-tight capitalize mt-2">
-              {new Date(tracking.estimated_delivery).toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+              {new Date(displayDate).toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
             </h2>
-            <p className="text-white/90 text-sm font-semibold mt-1">Antes del final del día</p>
+            <p className="text-white/90 text-sm font-semibold mt-1">
+              {isDelivered ? 'Entregado con éxito' : 'Antes del final del día'}
+            </p>
           </div>
           {tracking.delivery_address && (
             <div className="md:text-right max-w-sm space-y-1 relative z-10 bg-white/5 backdrop-blur-md p-5 rounded-3xl border border-white/10">
@@ -386,13 +399,15 @@ export default function TrackingDetailClient({ id, dict }: { id: string, dict: a
                 <p className="text-dark-300 font-bold uppercase tracking-wider text-[10px]">Factura ID</p>
                 <p className="font-mono text-xs font-bold text-dark-500 mt-0.5">{factura.id}</p>
               </div>
-              {tracking?.estimated_delivery && (
+              {displayDate && (
                 <>
                   <div className="h-px bg-border-2" />
                   <div>
-                    <p className="text-dark-300 font-bold uppercase tracking-wider text-[10px]">Entrega Estimada</p>
-                    <p className="font-bold text-brand-500 mt-0.5">
-                      {new Date(tracking.estimated_delivery).toLocaleDateString()}
+                    <p className="text-dark-300 font-bold uppercase tracking-wider text-[10px]">
+                      {isDelivered ? 'Fecha de Entrega' : 'Entrega Estimada'}
+                    </p>
+                    <p className={cn("font-bold mt-0.5", isDelivered ? "text-emerald-600" : "text-brand-500")}>
+                      {new Date(displayDate).toLocaleDateString()}
                     </p>
                   </div>
                 </>

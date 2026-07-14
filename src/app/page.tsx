@@ -122,22 +122,44 @@ export default async function Dashboard() {
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-        <section className="card !p-5 md:!p-8 lg:col-span-2">
-          <div className="flex items-center gap-2 mb-6 md:mb-8">
-            <BarChart3 className="w-5 h-5 text-brand-500" />
-            <h2 className="text-lg md:text-xl font-bold text-dark">Facturación Mensual</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <section className="card !p-5 md:!p-6 flex flex-col justify-between bg-white border border-slate-100 rounded-3xl shadow-sm">
+          <div>
+            <div className="flex items-center gap-2 mb-6">
+              <div className="p-2 bg-brand-50 text-brand-600 rounded-xl">
+                <BarChart3 className="w-4 h-4" />
+              </div>
+              <h2 className="text-base font-bold text-dark">Facturación Mensual</h2>
+            </div>
+            <MonthlyBillingChart facturas={facturas} />
           </div>
-          <MonthlyBillingChart facturas={facturas} />
         </section>
 
-        <section className="card !p-5 md:!p-8 lg:col-span-1 flex flex-col">
-          <div className="flex items-center gap-2 mb-6 md:mb-8">
-            <PieChartIcon className="w-5 h-5 text-brand-500" />
-            <h2 className="text-lg md:text-xl font-bold text-dark">Productos Más Comprados</h2>
+        <section className="card !p-5 md:!p-6 flex flex-col justify-between bg-white border border-slate-100 rounded-3xl shadow-sm">
+          <div>
+            <div className="flex items-center gap-2 mb-6">
+              <div className="p-2 bg-brand-50 text-brand-600 rounded-xl">
+                <ShoppingCart className="w-4 h-4" />
+              </div>
+              <h2 className="text-base font-bold text-dark">Productos Más Comprados</h2>
+            </div>
+            <div className="flex-1 flex items-center justify-center">
+              <TopProductsChart data={topProducts} />
+            </div>
           </div>
-          <div className="flex-1 flex items-center justify-center">
-            <TopProductsChart data={topProducts} />
+        </section>
+
+        <section className="card !p-5 md:!p-6 flex flex-col justify-between bg-white border border-slate-100 rounded-3xl shadow-sm">
+          <div>
+            <div className="flex items-center gap-2 mb-6">
+              <div className="p-2 bg-brand-50 text-brand-600 rounded-xl">
+                <PieChartIcon className="w-4 h-4" />
+              </div>
+              <h2 className="text-base font-bold text-dark">Estado de Facturas</h2>
+            </div>
+            <div className="flex-1 flex items-center justify-center">
+              <InvoiceStatusChart facturas={facturas} />
+            </div>
           </div>
         </section>
       </div>
@@ -161,20 +183,20 @@ export default async function Dashboard() {
                 <Link key={factura.id} href={`/orders/${factura.id}`} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 md:p-5 rounded-2xl bg-surface-2 border border-border-2 hover:border-brand-300 transition-all group gap-4 cursor-pointer block">
                   <div className="flex items-center gap-4 md:gap-5">
                     <div className={cn(
-                      "w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center shadow-sm border border-border group-hover:scale-105 transition-transform flex-shrink-0",
+                      "w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shadow-sm border border-border group-hover:scale-105 transition-transform flex-shrink-0",
                       factura.estado === 'pagada' ? 'bg-success-bg text-success' : 'bg-warning-bg text-warning'
                     )}>
-                      <FileText className="w-6 h-6 md:w-7 md:h-7 transition-colors" />
+                      <FileText className="w-5 h-5 md:w-6 md:h-6 transition-colors" />
                     </div>
                     <div className="min-w-0">
-                      <p className="font-bold text-dark truncate">Factura #{factura.numero_factura}</p>
-                      <p className="text-xs md:text-sm text-dark-500 font-medium truncate">{new Date(factura.fecha_expedicion).toLocaleDateString()}</p>
+                      <p className="font-bold text-dark truncate text-sm md:text-base">Factura #{factura.numero_factura}</p>
+                      <p className="text-xs text-dark-500 font-medium truncate">{new Date(factura.fecha_expedicion).toLocaleDateString()}</p>
                     </div>
                   </div>
                   <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-1">
-                    <p className="font-black text-dark text-lg">${Number(factura.total).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                    <p className="font-black text-dark text-base md:text-lg">${Number(factura.total).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                     <span className={cn(
-                      "text-[10px] md:text-xs font-black uppercase tracking-widest px-2 py-1 rounded-full",
+                      "text-[9px] md:text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-full",
                       factura.estado === 'pagada' ? 'bg-success-bg text-success' : 'bg-warning-bg text-warning'
                     )}>
                       {factura.estado === 'pagada' ? 'Pagada' : 'Pendiente'}
@@ -238,23 +260,30 @@ function StatsCard({ label, value, change, icon: Icon, trend, color = 'brand' }:
   }
   
   return (
-    <div className="card-hover card !p-5 md:!p-7 flex flex-col justify-between min-h-[140px] md:min-h-0">
-      <div className="flex items-start justify-between mb-4 md:mb-5">
-        <div className={cn("p-3 md:p-4 rounded-xl md:2xl", colorMap[color] || colorMap.brand)}>
-          <Icon className="w-5 h-5 md:w-7 md:h-7" />
+    <div className="card-hover card !p-5 flex flex-col justify-between transition-all duration-300 hover:shadow-lg border border-slate-100 rounded-3xl bg-white min-h-[130px]">
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-dark-500 font-bold text-xs uppercase tracking-wider">{label}</span>
+        <div className={cn("p-2 rounded-xl flex items-center justify-center flex-shrink-0", colorMap[color] || colorMap.brand)}>
+          <Icon className="w-4 h-4 md:w-5 h-5" />
         </div>
-        {trend && (
-          <span className={cn(
-            "text-[9px] md:text-xs font-black uppercase tracking-widest px-2 md:px-3 py-1 md:py-1.5 rounded-full",
-            trend === 'up' ? 'text-success bg-success-bg' : 'text-warning bg-warning-bg'
-          )}>
-            {trend === 'up' ? '↑' : '↓'} <span className="hidden xs:inline">{change}</span>
-          </span>
-        )}
       </div>
       <div>
-        <p className="text-2xl md:text-4xl font-black text-dark mb-0.5 md:mb-1 tracking-tighter">{value}</p>
-        <p className="text-[10px] md:text-sm text-dark-500 font-bold uppercase tracking-widest leading-tight">{label}</p>
+        <h3 className="text-xl md:text-2xl font-black text-dark tracking-tight mb-1">{value}</h3>
+        <div className="flex items-center gap-2">
+          {trend && (
+            <span className={cn(
+              "text-[9px] md:text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-full",
+              trend === 'up' ? 'text-success bg-success-bg' : 'text-warning bg-warning-bg'
+            )}>
+              {trend === 'up' ? '↑' : '↓'} <span className="inline">{change}</span>
+            </span>
+          )}
+          {!trend && (
+            <span className="text-[10px] font-semibold text-dark-300">
+              {change}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   )
