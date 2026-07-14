@@ -172,11 +172,17 @@ export default function TrackingDetailClient({ id, dict }: { id: string, dict: a
     return `https://google.com/search?q=${encodeURIComponent(c + ' ' + num)}`
   }
 
+  const getMappedStatus = (status: string) => {
+    if (status === 'out_for_delivery') return 'in_transit'
+    return status
+  }
+
   // Determine current active step index
   const getCurrentStepIndex = () => {
     if (updates.length === 0) return 0
-    const latestUpdate = updates[updates.length - 1]
-    const idx = steps.findIndex(s => s.key === latestUpdate.status)
+    const latestUpdate = updates[0]
+    const mappedStatus = getMappedStatus(latestUpdate.status)
+    const idx = steps.findIndex(s => s.key === mappedStatus)
     return idx === -1 ? 0 : idx
   }
 
@@ -238,6 +244,28 @@ export default function TrackingDetailClient({ id, dict }: { id: string, dict: a
           )}
         </div>
       </header>
+
+      {/* UPS-style Prominent Estimated Delivery Card */}
+      {tracking?.estimated_delivery && (
+        <div className="card rounded-[2rem] p-8 bg-gradient-to-br from-brand-500 via-brand-600 to-indigo-700 text-white border-none shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden relative group">
+          <div className="absolute right-0 bottom-0 opacity-10 translate-x-10 translate-y-10 pointer-events-none transition-transform group-hover:scale-110 duration-700">
+            <Truck className="w-64 h-64" />
+          </div>
+          <div className="space-y-1 relative z-10">
+            <span className="text-white/80 text-[10px] font-black uppercase tracking-[0.2em]">Fecha de Entrega Estimada</span>
+            <h2 className="text-3xl md:text-5xl font-black tracking-tight capitalize mt-2">
+              {new Date(tracking.estimated_delivery).toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+            </h2>
+            <p className="text-white/90 text-sm font-semibold mt-1">Antes del final del día</p>
+          </div>
+          {tracking.delivery_address && (
+            <div className="md:text-right max-w-sm space-y-1 relative z-10 bg-white/5 backdrop-blur-md p-5 rounded-3xl border border-white/10">
+              <span className="text-white/80 text-[9px] font-black uppercase tracking-[0.2em] block">Dirección de Envío</span>
+              <p className="font-bold text-xs md:text-sm text-white/95 leading-relaxed">{tracking.delivery_address}</p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Progress Stepper Bar (eBay style) */}
       <section className="card rounded-[2rem] p-6 md:p-8 shadow-xl border border-border-2 bg-gradient-to-br from-white to-surface-2">

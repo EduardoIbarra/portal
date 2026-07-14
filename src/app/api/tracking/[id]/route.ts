@@ -39,7 +39,7 @@ export async function GET(
       .from('factura_tracking_updates')
       .select('*')
       .eq('factura_id', facturaId)
-      .order('event_date', { ascending: true })
+      .order('event_date', { ascending: false })
 
     return NextResponse.json({
       factura,
