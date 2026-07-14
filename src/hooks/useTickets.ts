@@ -17,9 +17,13 @@ export function useTickets() {
   const fetchTickets = async () => {
     try {
       setLoading(true)
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error("Not logged in")
+
       const { data, error } = await supabase
         .from('tickets')
         .select('*')
+        .or(`reporter_id.eq.${user.id},assignee_id.eq.${user.id}`)
         .order('created_at', { ascending: false })
 
       if (error) throw error

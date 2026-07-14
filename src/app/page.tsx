@@ -32,6 +32,8 @@ export default async function Dashboard() {
   const supabase = await createClient()
   let facturas: any[] = []
   let topProducts: { name: string, value: number }[] = []
+  let latestCartaUrl: string | null = null
+
 
   if (profile?.client_id) {
     const { data } = await supabase
@@ -59,6 +61,18 @@ export default async function Dashboard() {
           .sort((a, b) => b.value - a.value)
           .slice(0, 5)
       }
+    }
+
+    const { data: latestCarta } = await supabase
+      .from('cartas_distribucion')
+      .select('letter_url')
+      .eq('client_id', profile.client_id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (latestCarta?.letter_url) {
+      latestCartaUrl = latestCarta.letter_url
     }
   }
 
@@ -219,10 +233,25 @@ export default async function Dashboard() {
             <div className="relative z-10">
               <h3 className="text-xl md:text-2xl font-black mb-2 tracking-tight">{dict.dashboard.needLetter}</h3>
               <p className="text-brand-100 mb-6 md:mb-8 font-medium text-sm md:text-base">{dict.dashboard.letterDescription}</p>
-              <button className="w-full sm:w-auto bg-white text-brand-500 px-6 md:px-8 py-3 rounded-xl font-black flex items-center justify-center gap-2 hover:bg-brand-50 transition-all active:scale-95 shadow-lg text-sm md:text-base">
-                {dict.common.download}
-                <ArrowUpRight className="w-5 h-5" />
-              </button>
+              {latestCartaUrl ? (
+                <a 
+                  href={latestCartaUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full sm:w-auto bg-white text-brand-500 px-6 md:px-8 py-3 rounded-xl font-black inline-flex items-center justify-center gap-2 hover:bg-brand-50 transition-all active:scale-95 shadow-lg text-sm md:text-base"
+                >
+                  {dict.common.download}
+                  <ArrowUpRight className="w-5 h-5" />
+                </a>
+              ) : (
+                <Link 
+                  href="/distributor-letter"
+                  className="w-full sm:w-auto bg-white text-brand-500 px-6 md:px-8 py-3 rounded-xl font-black inline-flex items-center justify-center gap-2 hover:bg-brand-50 transition-all active:scale-95 shadow-lg text-sm md:text-base"
+                >
+                  Ver Cartas
+                  <ArrowUpRight className="w-5 h-5" />
+                </Link>
+              )}
             </div>
             <div className="absolute -right-8 -bottom-8 opacity-10 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
               <FileCheck className="w-40 h-40 md:w-56 md:h-56" />

@@ -1,6 +1,8 @@
 import { getProfile } from '@/lib/auth-utils'
 import { createClient } from '@/lib/supabase-server'
 import { User, Mail, MapPin, Phone, Hash, FileText } from 'lucide-react'
+import { AddressManager } from './AddressManager'
+
 
 export default async function ProfilePage() {
   const profile = await getProfile()
@@ -136,6 +138,10 @@ export default async function ProfilePage() {
                 </p>
               </div>
             </div>
+          </div>
+
+          <div className="card p-8 md:p-10 bg-white shadow-sm border border-border rounded-3xl mt-6">
+            <AddressManager clientId={clientInfo.id} initialAddresses={clientInfo.addresses || []} />
           </div>
         </div>
       ) : (
