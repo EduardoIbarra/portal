@@ -39,7 +39,7 @@ export async function GET(
       .from('factura_tracking_updates')
       .select('*')
       .eq('factura_id', facturaId)
-      .order('created_at', { ascending: true })
+      .order('event_date', { ascending: true })
 
     return NextResponse.json({
       factura,
@@ -59,7 +59,7 @@ export async function POST(
   try {
     const { id: facturaId } = await params
     const body = await request.json()
-    const { action, carrier, trackingNumber, status, description, location } = body
+    const { action, carrier, trackingNumber, status, description, location, estimatedDelivery, deliveryAddress, eventDate } = body
     const supabase = await createClient()
 
     // Fetch the factura first
@@ -94,12 +94,28 @@ export async function POST(
         // Create new tracking record
         const { data: newTracking, error: createErr } = await supabase
           .from('factura_tracking')
-          .insert({ carrier, tracking_number: trackingNumber })
+          .insert({ 
+            carrier, 
+            tracking_number: trackingNumber,
+            estimated_delivery: estimatedDelivery || null,
+            delivery_address: deliveryAddress || null
+          })
           .select('id')
           .single()
 
         if (createErr) throw createErr
         trackingId = newTracking.id
+      } else {
+        // Update existing tracking record with estimated delivery and address if provided
+        const updateData: any = {}
+        if (estimatedDelivery) updateData.estimated_delivery = estimatedDelivery
+        if (deliveryAddress) updateData.delivery_address = deliveryAddress
+        if (Object.keys(updateData).length > 0) {
+          await supabase
+            .from('factura_tracking')
+            .update(updateData)
+            .eq('id', trackingId)
+        }
       }
 
       // Update factura to point to this tracking record
@@ -139,7 +155,8 @@ export async function POST(
           factura_id: facturaId,
           status,
           description,
-          location: location || null
+          location: location || null,
+          event_date: eventDate || new Date().toISOString()
         })
         .select('*')
         .single()

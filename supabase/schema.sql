@@ -189,3 +189,32 @@ create table if not exists public.factura_receipts (
 
 alter table public.factura_receipts enable row level security;
 create policy "Allow all factura receipts" on public.factura_receipts for all using (true);
+
+-- 13. Factura Tracking
+create table if not exists public.factura_tracking (
+  id                  uuid primary key default gen_random_uuid(),
+  carrier             text not null,
+  tracking_number     text not null,
+  estimated_delivery  timestamptz,
+  delivery_address    text,
+  created_at          timestamptz not null default now(),
+  updated_at          timestamptz not null default now()
+);
+
+alter table public.facturas_cliente add column if not exists tracking_id uuid references public.factura_tracking(id) on delete set null;
+
+create table if not exists public.factura_tracking_updates (
+  id          uuid primary key default gen_random_uuid(),
+  factura_id  uuid not null references public.facturas_cliente(id) on delete cascade,
+  status      text not null,
+  description text not null,
+  location    text,
+  created_at  timestamptz not null default now(),
+  event_date  timestamptz default now()
+);
+
+alter table public.factura_tracking enable row level security;
+alter table public.factura_tracking_updates enable row level security;
+
+create policy "Allow all factura tracking" on public.factura_tracking for all using (true);
+create policy "Allow all factura tracking updates" on public.factura_tracking_updates for all using (true);

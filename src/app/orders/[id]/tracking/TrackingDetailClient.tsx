@@ -29,22 +29,31 @@ export default function TrackingDetailClient({ id, dict }: { id: string, dict: a
   // Admin form state
   const [carrier, setCarrier] = useState('DHL')
   const [trackingNumber, setTrackingNumber] = useState('')
+  const [estimatedDelivery, setEstimatedDelivery] = useState('')
+  const [deliveryAddress, setDeliveryAddress] = useState('')
   const [newStatus, setNewStatus] = useState('processing')
   const [newDescription, setNewDescription] = useState('')
   const [newLocation, setNewLocation] = useState('')
+  const [newEventDate, setNewEventDate] = useState('')
   const [actionLoading, setActionLoading] = useState(false)
   const [showAdminPanel, setShowAdminPanel] = useState(false)
 
   const steps = [
-    { key: 'created', label: 'Orden Creada', icon: Clock },
-    { key: 'processing', label: 'En Preparación', icon: Package },
-    { key: 'shipped', label: 'Enviado', icon: Truck },
+    { key: 'created', label: 'Creada', icon: Clock },
+    { key: 'import_customs', label: 'Aduana', icon: Compass },
+    { key: 'import_warehouse', label: 'Hub USA', icon: Package },
+    { key: 'import_released', label: 'Liberado MX', icon: CheckCircle2 },
+    { key: 'processing', label: 'Preparación', icon: Package },
+    { key: 'shipped', label: 'Recolectado', icon: Truck },
     { key: 'in_transit', label: 'En Tránsito', icon: Compass },
     { key: 'delivered', label: 'Entregado', icon: CheckCircle2 }
   ]
 
   const statusIcons: any = {
     created: Clock,
+    import_customs: Compass,
+    import_warehouse: Package,
+    import_released: CheckCircle2,
     processing: Package,
     shipped: Truck,
     in_transit: Compass,
@@ -54,6 +63,9 @@ export default function TrackingDetailClient({ id, dict }: { id: string, dict: a
 
   const statusColors: any = {
     created: 'bg-yellow-500/10 text-yellow-600 border-yellow-200',
+    import_customs: 'bg-orange-500/10 text-orange-600 border-orange-200',
+    import_warehouse: 'bg-teal-500/10 text-teal-600 border-teal-200',
+    import_released: 'bg-emerald-500/10 text-emerald-600 border-emerald-200',
     processing: 'bg-blue-500/10 text-blue-600 border-blue-200',
     shipped: 'bg-indigo-500/10 text-indigo-600 border-indigo-200',
     in_transit: 'bg-purple-500/10 text-purple-600 border-purple-200',
@@ -74,6 +86,10 @@ export default function TrackingDetailClient({ id, dict }: { id: string, dict: a
       if (data.tracking) {
         setCarrier(data.tracking.carrier)
         setTrackingNumber(data.tracking.tracking_number)
+        if (data.tracking.estimated_delivery) {
+          setEstimatedDelivery(new Date(data.tracking.estimated_delivery).toISOString().split('T')[0])
+        }
+        setDeliveryAddress(data.tracking.delivery_address || '')
       }
     } catch (err) {
       console.error('Error fetching tracking:', err)
@@ -97,7 +113,9 @@ export default function TrackingDetailClient({ id, dict }: { id: string, dict: a
         body: JSON.stringify({
           action: 'update_carrier',
           carrier,
-          trackingNumber
+          trackingNumber,
+          estimatedDelivery: estimatedDelivery || null,
+          deliveryAddress: deliveryAddress || null
         })
       })
       if (!res.ok) throw new Error('Error al actualizar transportista')
@@ -122,12 +140,14 @@ export default function TrackingDetailClient({ id, dict }: { id: string, dict: a
           action: 'add_update',
           status: newStatus,
           description: newDescription,
-          location: newLocation
+          location: newLocation,
+          eventDate: newEventDate ? new Date(newEventDate).toISOString() : null
         })
       })
       if (!res.ok) throw new Error('Error al añadir actualización')
       setNewDescription('')
       setNewLocation('')
+      setNewEventDate('')
       await fetchTrackingData()
     } catch (error) {
       console.error(error)
@@ -232,10 +252,10 @@ export default function TrackingDetailClient({ id, dict }: { id: string, dict: a
           <div className="absolute top-5 left-8 right-8 h-1 bg-border-2 -translate-y-1/2 z-0 hidden md:block" />
           <div 
             className="absolute top-5 left-8 h-1 bg-brand-500 -translate-y-1/2 transition-all duration-500 z-0 hidden md:block" 
-            style={{ width: `${(currentStepIdx / (steps.length - 1)) * 90}%` }}
+            style={{ width: `${(currentStepIdx / (steps.length - 1)) * 92}%` }}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-2 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-8 gap-6 md:gap-2 relative z-10">
             {steps.map((step, idx) => {
               const StepIcon = step.icon
               const isCompleted = idx <= currentStepIdx
@@ -305,7 +325,7 @@ export default function TrackingDetailClient({ id, dict }: { id: string, dict: a
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs text-dark-400 font-bold">
-                            {new Date(update.created_at).toLocaleString()}
+                            {new Date(update.event_date || update.created_at).toLocaleString()}
                           </span>
                           {update.location && (
                             <span className="inline-flex items-center gap-1 text-[10px] font-bold text-dark-500 bg-surface-3 px-2.5 py-0.5 rounded-full">
@@ -338,6 +358,28 @@ export default function TrackingDetailClient({ id, dict }: { id: string, dict: a
                 <p className="text-dark-300 font-bold uppercase tracking-wider text-[10px]">Factura ID</p>
                 <p className="font-mono text-xs font-bold text-dark-500 mt-0.5">{factura.id}</p>
               </div>
+              {tracking?.estimated_delivery && (
+                <>
+                  <div className="h-px bg-border-2" />
+                  <div>
+                    <p className="text-dark-300 font-bold uppercase tracking-wider text-[10px]">Entrega Estimada</p>
+                    <p className="font-bold text-brand-500 mt-0.5">
+                      {new Date(tracking.estimated_delivery).toLocaleDateString()}
+                    </p>
+                  </div>
+                </>
+              )}
+              {tracking?.delivery_address && (
+                <>
+                  <div className="h-px bg-border-2" />
+                  <div>
+                    <p className="text-dark-300 font-bold uppercase tracking-wider text-[10px]">Dirección de Entrega</p>
+                    <p className="text-xs font-medium text-dark-600 mt-0.5 leading-relaxed">
+                      {tracking.delivery_address}
+                    </p>
+                  </div>
+                </>
+              )}
               <div className="h-px bg-border-2" />
               <div>
                 <p className="text-dark-300 font-bold uppercase tracking-wider text-[10px]">Estado de Surtido</p>
@@ -390,6 +432,25 @@ export default function TrackingDetailClient({ id, dict }: { id: string, dict: a
                     className="w-full bg-white border border-border-2 p-3 rounded-xl font-medium focus:ring-2 focus:ring-brand-500 outline-none"
                   />
                 </div>
+                <div>
+                  <label className="block text-xs font-bold text-dark-500 uppercase tracking-wider mb-2">Fecha Estimada de Entrega</label>
+                  <input 
+                    type="date" 
+                    value={estimatedDelivery}
+                    onChange={e => setEstimatedDelivery(e.target.value)}
+                    className="w-full bg-white border border-border-2 p-3 rounded-xl font-medium focus:ring-2 focus:ring-brand-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-dark-500 uppercase tracking-wider mb-2">Dirección de Entrega</label>
+                  <input 
+                    type="text" 
+                    value={deliveryAddress}
+                    onChange={e => setDeliveryAddress(e.target.value)}
+                    placeholder="Calle, Número, Ciudad, Estado, CP"
+                    className="w-full bg-white border border-border-2 p-3 rounded-xl font-medium focus:ring-2 focus:ring-brand-500 outline-none"
+                  />
+                </div>
                 <button 
                   type="submit" 
                   disabled={actionLoading}
@@ -411,8 +472,11 @@ export default function TrackingDetailClient({ id, dict }: { id: string, dict: a
                       className="w-full bg-white border border-border-2 p-3 rounded-xl font-medium focus:ring-2 focus:ring-brand-500 outline-none"
                     >
                       <option value="created">Orden Creada</option>
+                      <option value="import_customs">Aduana/Importación</option>
+                      <option value="import_warehouse">En Hub USA</option>
+                      <option value="import_released">Liberado MX</option>
                       <option value="processing">En Preparación</option>
-                      <option value="shipped">Enviado</option>
+                      <option value="shipped">Recolectado</option>
                       <option value="in_transit">En Tránsito</option>
                       <option value="delivered">Entregado</option>
                     </select>
@@ -427,6 +491,15 @@ export default function TrackingDetailClient({ id, dict }: { id: string, dict: a
                       className="w-full bg-white border border-border-2 p-3 rounded-xl font-medium focus:ring-2 focus:ring-brand-500 outline-none"
                     />
                   </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-dark-500 uppercase tracking-wider mb-2">Fecha del Evento (Opcional)</label>
+                  <input 
+                    type="datetime-local" 
+                    value={newEventDate}
+                    onChange={e => setNewEventDate(e.target.value)}
+                    className="w-full bg-white border border-border-2 p-3 rounded-xl font-medium focus:ring-2 focus:ring-brand-500 outline-none"
+                  />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-dark-500 uppercase tracking-wider mb-2">Descripción del Evento</label>
