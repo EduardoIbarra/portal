@@ -55,7 +55,7 @@ function SidebarContent({ lang, dict, collapsed, setMobileOpen, pathname }: Side
     { href: `/prices`, icon: Tag, label: dict.common.prices },
     { href: `/catalogues`, icon: BookOpen, label: 'Catálogos' },
     { href: `/distributor-letter`, icon: FileText, label: dict.common.distributorLetter },
-    { href: `/shop`, icon: ShoppingCart, label: dict.common.shop },
+    { href: `https://kiosco.arthromed.com.mx/?source=erp-customer-portal`, icon: ShoppingCart, label: dict.common.shop, target: '_blank', rel: 'noopener noreferrer' },
     { href: `/orders`, icon: Package, label: 'Facturas / Pedidos' },
     { href: `/tickets`, icon: LifeBuoy, label: 'Tickets' },
   ]
@@ -102,6 +102,8 @@ function SidebarContent({ lang, dict, collapsed, setMobileOpen, pathname }: Side
               href={item.href}
               onClick={() => setMobileOpen(false)}
               title={collapsed ? item.label : undefined}
+              target={item.target}
+              rel={item.rel}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 group border",
                 active 
