@@ -63,16 +63,31 @@ export default async function Dashboard() {
       }
     }
 
-    const { data: latestCarta } = await supabase
-      .from('cartas_distribucion')
-      .select('letter_url')
-      .eq('client_id', profile.client_id)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle()
+    // Retrieve client RFC to query the distribution letter
+    const { data: clientInfo } = await supabase
+      .from('clientes')
+      .select('rfc')
+      .eq('id', profile.client_id)
+      .single()
 
-    if (latestCarta?.letter_url) {
-      latestCartaUrl = latestCarta.letter_url
+    if (clientInfo?.rfc) {
+      const { data: erpClient } = await supabase
+        .from('clients')
+        .select('id')
+        .eq('rfc', clientInfo.rfc)
+        .maybeSingle()
+
+      const { data: latestCarta } = await supabase
+        .from('cartas_distribucion')
+        .select('letter_url')
+        .or(`rfc.eq.${clientInfo.rfc}${erpClient ? `,client_id.eq.${erpClient.id}` : ''}`)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (latestCarta?.letter_url) {
+        latestCartaUrl = latestCarta.letter_url
+      }
     }
   }
 

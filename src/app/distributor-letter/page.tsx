@@ -8,13 +8,30 @@ export default async function DistributorLetterPage() {
 
   let cartas: any[] = []
   if (profile?.client_id) {
-    const { data } = await supabase
-      .from('cartas_distribucion')
-      .select('*')
-      .eq('client_id', profile.client_id)
-      .order('created_at', { ascending: false })
-    
-    if (data) cartas = data
+    // 1. Fetch current client's RFC from clientes table
+    const { data: clientInfo } = await supabase
+      .from('clientes')
+      .select('rfc')
+      .eq('id', profile.client_id)
+      .single()
+
+    if (clientInfo?.rfc) {
+      // 2. Try to find matching clients row in clients table to match client_id
+      const { data: erpClient } = await supabase
+        .from('clients')
+        .select('id')
+        .eq('rfc', clientInfo.rfc)
+        .maybeSingle()
+
+      // 3. Query letters by matching RFC or erpClient.id
+      const { data } = await supabase
+        .from('cartas_distribucion')
+        .select('*')
+        .or(`rfc.eq.${clientInfo.rfc}${erpClient ? `,client_id.eq.${erpClient.id}` : ''}`)
+        .order('created_at', { ascending: false })
+      
+      if (data) cartas = data
+    }
   }
 
   return (
