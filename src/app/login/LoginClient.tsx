@@ -9,8 +9,29 @@ import {
 
 export default function LoginClient({ lang, dict }: { lang: string, dict: any }) {
   const [loading, setLoading] = useState(false)
+  const [emailLoading, setEmailLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const supabase = createClient()
+
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setEmailLoading(true)
+    setError(null)
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (error) {
+      setError(error.message)
+      setEmailLoading(false)
+    } else {
+      window.location.href = `/`
+    }
+  }
 
   const handleGoogleLogin = async () => {
     setLoading(true)
@@ -19,7 +40,7 @@ export default function LoginClient({ lang, dict }: { lang: string, dict: any })
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/api/auth/callback?lang=${lang}`,
+        redirectTo: `${window.location.origin}/api/auth/callback`,
         queryParams: {
           prompt: 'select_account',
         },
@@ -55,17 +76,57 @@ export default function LoginClient({ lang, dict }: { lang: string, dict: any })
               </div>
             )}
 
+            <form onSubmit={handleEmailLogin} className="space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-dark-500 mb-2 pl-1">{dict.common.email}</label>
+                <input 
+                  type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-5 py-4 rounded-2xl border border-border-2 bg-bg-hover focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all text-dark placeholder:text-dark-300 font-medium"
+                  placeholder="name@arthromed.com.mx"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-dark-500 mb-2 pl-1">{dict.common.password}</label>
+                <input 
+                  type="password" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-5 py-4 rounded-2xl border border-border-2 bg-bg-hover focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all text-dark placeholder:text-dark-300 font-medium"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+              <button 
+                type="submit"
+                disabled={emailLoading || loading}
+                className="w-full flex items-center justify-center gap-4 px-6 py-4 mt-2 rounded-2xl bg-brand-500 text-white font-bold hover:bg-brand-600 active:scale-[0.98] transition-all duration-200 shadow-xl shadow-brand-500/20 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer" />
+                {emailLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : dict.common.signIn}
+              </button>
+            </form>
+
+            <div className="flex items-center gap-4 my-6">
+              <div className="h-px bg-border-2 flex-1"></div>
+              <span className="text-xs font-bold text-dark-400 uppercase tracking-widest">OR</span>
+              <div className="h-px bg-border-2 flex-1"></div>
+            </div>
+
             <button 
               onClick={handleGoogleLogin}
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-4 px-6 py-5 rounded-[1.5rem] border border-border-2 bg-white hover:bg-bg-hover active:scale-[0.98] transition-all duration-200 group relative overflow-hidden shadow-xl shadow-brand-500/5"
+              type="button"
+              disabled={loading || emailLoading}
+              className="w-full flex items-center justify-center gap-4 px-6 py-4 rounded-2xl border border-border-2 bg-white hover:bg-bg-hover active:scale-[0.98] transition-all duration-200 group relative overflow-hidden shadow-sm"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-500/5 to-transparent -translate-x-full group-hover:animate-shimmer" />
               {loading ? (
-                <Loader2 className="w-7 h-7 animate-spin text-brand-500" />
+                <Loader2 className="w-6 h-6 animate-spin text-brand-500" />
               ) : (
                 <>
-                  <svg className="w-6 h-6" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
                       fill="#4285F4"
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -83,7 +144,7 @@ export default function LoginClient({ lang, dict }: { lang: string, dict: any })
                       d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                   </svg>
-                  <span className="text-lg font-black text-dark tracking-tight">{dict.common.continueWithGoogle}</span>
+                  <span className="text-base font-bold text-dark tracking-tight">{dict.common.continueWithGoogle}</span>
                 </>
               )}
             </button>

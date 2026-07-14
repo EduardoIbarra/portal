@@ -4,8 +4,7 @@ import { NextResponse } from 'next/server'
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
-  const lang = searchParams.get('lang') ?? 'es'
-  const next = searchParams.get('next') ?? `/${lang}`
+  const next = searchParams.get('next') ?? `/`
 
   // Determine the correct origin for redirection
   const host = request.headers.get('host')
@@ -55,5 +54,5 @@ export async function GET(request: Request) {
   }
 
   // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/${lang}/login?error=Could not authenticate user`)
+  return NextResponse.redirect(`${origin}/login?error=Could not authenticate user`)
 }

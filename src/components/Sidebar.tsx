@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { createClient } from '@/lib/supabase'
 import { 
   LayoutDashboard, 
   Tag, 
@@ -14,7 +15,11 @@ import {
   ChevronLeft, 
   ChevronRight, 
   Menu, 
-  X
+  X,
+  BookOpen,
+  LifeBuoy,
+  User,
+  ClipboardList
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -34,16 +39,29 @@ interface SidebarContentProps {
 }
 
 function SidebarContent({ lang, dict, collapsed, setMobileOpen, pathname }: SidebarContentProps) {
+  const router = useRouter()
+  const supabase = createClient()
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
+  }
+
   const navItems = [
-    { href: `/${lang}`, icon: LayoutDashboard, label: dict.common.dashboard },
-    { href: `/${lang}/prices`, icon: Tag, label: dict.common.prices },
-    { href: `/${lang}/distributor-letter`, icon: FileText, label: dict.common.distributorLetter },
-    { href: `/${lang}/shop`, icon: ShoppingCart, label: dict.common.shop },
-    { href: `/${lang}/orders`, icon: Package, label: dict.common.orders },
+    { href: `/`, icon: LayoutDashboard, label: dict.common.dashboard },
+    { href: `/profile`, icon: User, label: 'Mi Perfil' },
+    { href: `/quotes`, icon: ClipboardList, label: 'Cotizaciones' },
+    { href: `/prices`, icon: Tag, label: dict.common.prices },
+    { href: `/catalogues`, icon: BookOpen, label: 'Catálogos' },
+    { href: `/distributor-letter`, icon: FileText, label: dict.common.distributorLetter },
+    { href: `/shop`, icon: ShoppingCart, label: dict.common.shop },
+    { href: `/orders`, icon: Package, label: 'Facturas / Pedidos' },
+    { href: `/tickets`, icon: LifeBuoy, label: 'Tickets' },
   ]
 
   const isActive = (href: string) =>
-    href === `/${lang}` ? pathname === href : pathname.startsWith(href)
+    href === `/` ? pathname === href : pathname.startsWith(href)
 
   return (
     <div className="flex flex-col h-full bg-white">
@@ -109,7 +127,7 @@ function SidebarContent({ lang, dict, collapsed, setMobileOpen, pathname }: Side
       {/* Footer / Settings */}
       <div className="p-3 border-t border-blue-100 space-y-1">
         <Link
-          href={`/${lang}/settings`}
+          href="/settings"
           title={collapsed ? dict.common.settings : undefined}
           className={cn(
             "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 group border border-transparent text-dark-500 hover:bg-brand-50/50 hover:text-brand-500"
@@ -120,6 +138,7 @@ function SidebarContent({ lang, dict, collapsed, setMobileOpen, pathname }: Side
         </Link>
         
         <button
+          onClick={handleLogout}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-danger hover:bg-danger-bg transition-all border border-transparent group"
           title={collapsed ? dict.common.logout : undefined}
         >

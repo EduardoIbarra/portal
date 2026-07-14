@@ -110,3 +110,82 @@ create policy "Allow all hospital prices" on public.hospital_prices for all usin
 create policy "Allow all letters" on public.distributor_letters for all using (true);
 create policy "Allow all orders" on public.orders for all using (true);
 create policy "Allow all order items" on public.order_items for all using (true);
+
+-- 8. Tickets
+create table if not exists public.tickets (
+  id              uuid primary key default gen_random_uuid(),
+  created_at      timestamptz not null default now(),
+  updated_at      timestamptz not null default now(),
+  title           text not null,
+  description     text,
+  reporter_id     uuid not null references auth.users(id) on delete cascade,
+  assignee        text default 'Unassigned',
+  status          text not null default 'open' check (status in ('open', 'in_progress', 'resolved', 'closed'))
+);
+
+create trigger set_tickets_updated_at before update on public.tickets for each row execute function public.set_updated_at();
+
+alter table public.tickets enable row level security;
+create policy "Users can view their own tickets" on public.tickets for all using (auth.uid() = reporter_id);
+
+-- 9. Ticket Updates
+create table if not exists public.ticket_updates (
+  id          uuid primary key default gen_random_uuid(),
+  ticket_id   uuid not null references public.tickets(id) on delete cascade,
+  user_id     uuid not null references auth.users(id) on delete cascade,
+  content     text not null,
+  created_at  timestamptz not null default now()
+);
+
+alter table public.ticket_updates enable row level security;
+create policy "Users can view updates for their tickets" on public.ticket_updates for select using (
+  exists (select 1 from public.tickets where id = ticket_updates.ticket_id and reporter_id = auth.uid())
+);
+create policy "Users can create updates for their tickets" on public.ticket_updates for insert with check (
+  exists (select 1 from public.tickets where id = ticket_updates.ticket_id and reporter_id = auth.uid())
+  and auth.uid() = user_id
+);
+
+
+-- 10. Quotes
+create table if not exists public.quotes (
+  id              uuid primary key default gen_random_uuid(),
+  client_id       uuid not null references public.clients(id) on delete cascade,
+  status          text not null default 'draft' check (status in ('draft', 'sent', 'accepted', 'rejected')),
+  total_amount    decimal(12,2) not null default 0,
+  currency        text default 'MXN',
+  notes           text,
+  created_at      timestamptz not null default now(),
+  updated_at      timestamptz not null default now()
+);
+
+create trigger set_quotes_updated_at before update on public.quotes for each row execute function public.set_updated_at();
+
+alter table public.quotes enable row level security;
+create policy "Allow all quotes" on public.quotes for all using (true);
+
+-- 11. Quote Items
+create table if not exists public.quote_items (
+  id          uuid primary key default gen_random_uuid(),
+  quote_id    uuid not null references public.quotes(id) on delete cascade,
+  product_id  uuid not null references public.products(id),
+  quantity    integer not null check (quantity > 0),
+  unit_price  decimal(12,2) not null,
+  total_price decimal(12,2) not null,
+  created_at  timestamptz not null default now()
+);
+
+alter table public.quote_items enable row level security;
+create policy "Allow all quote items" on public.quote_items for all using (true);
+
+-- 12. Factura Receipts
+create table if not exists public.factura_receipts (
+  id          uuid primary key default gen_random_uuid(),
+  factura_id  text not null,
+  receipt_url text not null,
+  uploaded_by uuid not null references auth.users(id),
+  created_at  timestamptz not null default now()
+);
+
+alter table public.factura_receipts enable row level security;
+create policy "Allow all factura receipts" on public.factura_receipts for all using (true);

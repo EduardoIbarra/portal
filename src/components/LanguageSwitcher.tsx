@@ -5,13 +5,12 @@ import { Languages } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export default function LanguageSwitcher({ lang }: { lang: string }) {
-  const pathname = usePathname()
   const router = useRouter()
 
   const switchLanguage = (newLang: string) => {
-    const segments = pathname.split('/')
-    segments[1] = newLang
-    router.push(segments.join('/'))
+    document.cookie = `NEXT_LOCALE=${newLang}; path=/; max-age=31536000`
+    localStorage.setItem('NEXT_LOCALE', newLang)
+    router.refresh()
   }
 
   return (

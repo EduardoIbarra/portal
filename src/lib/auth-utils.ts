@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase-server'
 import { cache } from 'react'
+import { cookies } from 'next/headers'
 
 export const getSession = cache(async () => {
   const supabase = await createClient()
@@ -23,6 +24,15 @@ export const getProfile = cache(async () => {
     .select('*')
     .eq('id', user.id)
     .single()
+
+  if (profile && (profile.role === 'admin' || profile.role === 'superadmin')) {
+    const cookieStore = await cookies()
+    const impersonatedId = cookieStore.get('impersonated_client_id')?.value
+    if (impersonatedId) {
+      profile.client_id = impersonatedId
+      profile.is_impersonating = true // helpful flag
+    }
+  }
 
   return profile
 })

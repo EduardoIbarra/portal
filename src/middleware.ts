@@ -1,7 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const locales = ['es', 'en', 'zh']
 const defaultLocale = 'es'
 
 export async function middleware(request: NextRequest) {
@@ -10,6 +9,12 @@ export async function middleware(request: NextRequest) {
       headers: request.headers,
     },
   })
+
+  let locale = request.cookies.get('NEXT_LOCALE')?.value
+  if (!locale) {
+    locale = defaultLocale
+    response.cookies.set('NEXT_LOCALE', locale)
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -26,6 +31,10 @@ export async function middleware(request: NextRequest) {
               headers: request.headers,
             },
           })
+          // Also persist the locale cookie if we recreated the response
+          if (locale === defaultLocale) {
+             response.cookies.set('NEXT_LOCALE', locale)
+          }
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options)
           )
@@ -41,44 +50,22 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   // Protect all routes except login and auth callback
-  const isLoginPage = locales.some(locale => pathname === `/${locale}/login`)
+  const isLoginPage = pathname === '/login'
   const isAuthCallback = pathname.startsWith('/api/auth')
   const isPublicAsset = pathname.startsWith('/_next') || 
                         pathname.startsWith('/favicon.ico') ||
                         pathname.includes('.')
 
   if (!user && !isLoginPage && !isAuthCallback && !isPublicAsset) {
-    // Determine locale or fallback to default
-    const locale = locales.find(l => pathname.startsWith(`/${l}/`)) || defaultLocale
     const url = request.nextUrl.clone()
-    url.pathname = `/${locale}/login`
+    url.pathname = '/login'
     return NextResponse.redirect(url)
   }
 
   if (user && isLoginPage) {
-    const locale = locales.find(l => pathname.startsWith(`/${l}/`)) || defaultLocale
     const url = request.nextUrl.clone()
-    url.pathname = `/${locale}`
+    url.pathname = '/'
     return NextResponse.redirect(url)
-  }
-
-  // Handle i18n redirection if locale is missing
-  const pathnameIsMissingLocale = locales.every(
-    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
-  )
-
-  if (pathnameIsMissingLocale && !isPublicAsset && !isAuthCallback) {
-    const url = new URL(`/${defaultLocale}${pathname}`, request.url)
-    url.search = request.nextUrl.search
-    
-    const redirectResponse = NextResponse.redirect(url)
-    
-    // Transfer updated session cookies to the new redirect response
-    response.cookies.getAll().forEach((cookie) => {
-      redirectResponse.cookies.set(cookie.name, cookie.value)
-    })
-    
-    return redirectResponse
   }
 
   return response

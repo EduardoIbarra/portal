@@ -4,10 +4,10 @@ import OrderDetailClient from './OrderDetailClient'
 export default async function OrderDetailPage({
   params,
 }: {
-  params: Promise<{ id: string; lang: string }>
+  params: Promise<{ id: string }>
 }) {
-  const { id, lang } = await params
-  const dict = await getDictionary(lang as any)
+  const { id } = await params
+  const dict = await getDictionary()
 
   return (
     <main className="container mx-auto px-4 md:px-8 py-8 md:py-16">

@@ -205,6 +205,61 @@ export interface Database {
           updated_at?: string
         }
       }
+      tickets: {
+        Row: {
+          id: string
+          created_at: string
+          updated_at: string
+          title: string
+          description: string | null
+          reporter_id: string
+          assignee: string | null
+          status: 'open' | 'in_progress' | 'resolved' | 'closed'
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          title: string
+          description?: string | null
+          reporter_id: string
+          assignee?: string | null
+          status?: 'open' | 'in_progress' | 'resolved' | 'closed'
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          title?: string
+          description?: string | null
+          reporter_id?: string
+          assignee?: string | null
+          status?: 'open' | 'in_progress' | 'resolved' | 'closed'
+        }
+      }
+      ticket_updates: {
+        Row: {
+          id: string
+          ticket_id: string
+          user_id: string
+          content: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          ticket_id: string
+          user_id: string
+          content: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          ticket_id?: string
+          user_id?: string
+          content?: string
+          created_at?: string
+        }
+      }
     }
   }
 }

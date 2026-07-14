@@ -3,8 +3,21 @@
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { Bell, Search } from 'lucide-react'
 import Link from 'next/link'
+import { CustomerImpersonator } from '@/components/CustomerImpersonator'
 
-export default function Header({ lang, dict, user }: { lang: string, dict: any, user: any }) {
+export default function Header({ 
+  lang, 
+  dict, 
+  user,
+  isAdmin,
+  impersonatedId
+}: { 
+  lang: string, 
+  dict: any, 
+  user: any,
+  isAdmin?: boolean,
+  impersonatedId?: string
+}) {
   const userName = user?.user_metadata?.full_name || user?.user_metadata?.name || 'Distributor'
   const initial = userName.charAt(0).toUpperCase()
 
@@ -18,7 +31,7 @@ export default function Header({ lang, dict, user }: { lang: string, dict: any, 
 
       {/* Search bar - hidden on very small screens or made compact */}
       <Link
-        href={`/${lang}/shop`}
+        href="/shop"
         className="flex-1 max-w-md flex items-center gap-2 px-3 py-2 rounded-xl border border-blue-100 bg-blue-50/60 text-sm transition-colors hover:border-brand-500/40 min-w-0"
         style={{ color: '#8a8b8d' }}
       >
@@ -30,6 +43,12 @@ export default function Header({ lang, dict, user }: { lang: string, dict: any, 
       </Link>
 
       <div className="flex items-center gap-2 md:gap-3 ml-auto">
+        {isAdmin && (
+          <div className="mr-2">
+            <CustomerImpersonator currentImpersonatedId={impersonatedId} />
+          </div>
+        )}
+        
         <div className="hidden xs:block">
           <LanguageSwitcher lang={lang} />
         </div>

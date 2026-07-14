@@ -10,12 +10,16 @@ export function MainLayout({
   children, 
   lang, 
   dict,
-  user
+  user,
+  isAdmin,
+  impersonatedId
 }: { 
   children: React.ReactNode, 
   lang: string, 
   dict: any,
-  user: any
+  user: any,
+  isAdmin?: boolean,
+  impersonatedId?: string
 }) {
   const pathname = usePathname()
   const isLoginPage = pathname?.includes('/login')
@@ -36,7 +40,7 @@ export function MainLayout({
         "flex-1 flex flex-col transition-all duration-300 min-w-0",
         !isLoginPage ? (collapsed ? "lg:ml-16" : "lg:ml-60") : "ml-0"
       )}>
-        {!isLoginPage && <Header lang={lang} dict={dict} user={user} />}
+        {!isLoginPage && <Header lang={lang} dict={dict} user={user} isAdmin={isAdmin} impersonatedId={impersonatedId} />}
         
         <main className={cn(
           "flex-1 transition-all duration-300",
