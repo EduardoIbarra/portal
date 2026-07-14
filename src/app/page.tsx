@@ -68,7 +68,7 @@ export default async function Dashboard() {
       .from('clientes')
       .select('rfc')
       .eq('id', profile.client_id)
-      .single()
+      .maybeSingle()
 
     if (clientInfo?.rfc) {
       const { data: erpClient } = await supabase

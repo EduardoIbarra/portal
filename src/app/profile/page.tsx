@@ -15,7 +15,7 @@ export default async function ProfilePage() {
       .from('clientes')
       .select('*')
       .eq('id', profile.client_id)
-      .single()
+      .maybeSingle()
     
     if (data) clientInfo = data
   }

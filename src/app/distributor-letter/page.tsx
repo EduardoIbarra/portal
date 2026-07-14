@@ -13,7 +13,7 @@ export default async function DistributorLetterPage() {
       .from('clientes')
       .select('rfc')
       .eq('id', profile.client_id)
-      .single()
+      .maybeSingle()
 
     if (clientInfo?.rfc) {
       // 2. Try to find matching clients row in clients table to match client_id
