@@ -13,7 +13,7 @@ export function TopProductsChart({ data }: { data: { name: string, value: number
   }
 
   return (
-    <div className="w-full h-full min-h-[250px]">
+    <div className="w-full h-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} layout="vertical" margin={{ left: 0, right: 0, top: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e8f1f9" horizontal={false} />

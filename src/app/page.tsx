@@ -172,7 +172,7 @@ export default async function Dashboard() {
               </div>
               <h2 className="text-base font-bold text-dark">Productos Más Comprados</h2>
             </div>
-            <div className="flex-1 flex items-center justify-center">
+            <div className="h-[300px] w-full">
               <TopProductsChart data={topProducts} />
             </div>
           </div>

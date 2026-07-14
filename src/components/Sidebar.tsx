@@ -48,16 +48,36 @@ function SidebarContent({ lang, dict, collapsed, setMobileOpen, pathname }: Side
     router.refresh()
   }
 
-  const navItems = [
-    { href: `/`, icon: LayoutDashboard, label: dict.common.dashboard },
-    { href: `/profile`, icon: User, label: 'Mi Perfil' },
-    { href: `/quotes`, icon: ClipboardList, label: 'Cotizaciones' },
-    { href: `/prices`, icon: Tag, label: dict.common.prices },
-    { href: `/catalogues`, icon: BookOpen, label: 'Catálogos' },
-    { href: `/distributor-letter`, icon: FileText, label: dict.common.distributorLetter },
-    { href: `https://kiosco.arthromed.com.mx/?source=erp-customer-portal`, icon: ShoppingCart, label: dict.common.shop, target: '_blank', rel: 'noopener noreferrer' },
-    { href: `/orders`, icon: Package, label: 'Facturas / Pedidos' },
-    { href: `/tickets`, icon: LifeBuoy, label: 'Tickets' },
+  const menuGroups = [
+    {
+      title: 'General',
+      items: [
+        { href: `/`, icon: LayoutDashboard, label: dict.common.dashboard },
+        { href: `/profile`, icon: User, label: 'Mi Perfil' },
+      ]
+    },
+    {
+      title: 'Comercial & Catálogos',
+      items: [
+        { href: `/quotes`, icon: ClipboardList, label: 'Cotizaciones' },
+        { href: `/prices`, icon: Tag, label: dict.common.prices },
+        { href: `/catalogues`, icon: BookOpen, label: 'Catálogos' },
+        { href: `https://kiosco.arthromed.com.mx/?source=erp-customer-portal`, icon: ShoppingCart, label: dict.common.shop, target: '_blank', rel: 'noopener noreferrer' },
+      ]
+    },
+    {
+      title: 'Finanzas & Documentos',
+      items: [
+        { href: `/orders`, icon: Package, label: 'Facturas / Pedidos' },
+        { href: `/distributor-letter`, icon: FileText, label: dict.common.distributorLetter },
+      ]
+    },
+    {
+      title: 'Soporte',
+      items: [
+        { href: `/tickets`, icon: LifeBuoy, label: 'Tickets' },
+      ]
+    }
   ]
 
   const isActive = (href: string) =>
@@ -92,38 +112,49 @@ function SidebarContent({ lang, dict, collapsed, setMobileOpen, pathname }: Side
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-        {navItems.map((item) => {
-          const Icon = item.icon
-          const active = isActive(item.href)
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setMobileOpen(false)}
-              title={collapsed ? item.label : undefined}
-              target={item.target}
-              rel={item.rel}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 group border",
-                active 
-                  ? "bg-brand-50 border-brand-100 text-brand-500" 
-                  : "border-transparent text-dark-500 hover:bg-brand-50/50 hover:text-brand-500"
-              )}
-            >
-              <Icon
-                size={20}
-                className={cn("flex-shrink-0", active ? "text-brand-500" : "text-dark-300 group-hover:text-brand-500")}
-              />
-              {!collapsed && (
-                <span className="text-sm font-bold truncate tracking-tight">{item.label}</span>
-              )}
-              {active && !collapsed && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full pulse-dot bg-brand-500" />
-              )}
-            </Link>
-          )
-        })}
+      <nav className="flex-1 p-3 space-y-4 overflow-y-auto">
+        {menuGroups.map((group, groupIndex) => (
+          <div key={group.title} className="space-y-1">
+            {!collapsed ? (
+              <div className="px-3 pt-2 pb-1 text-[10px] font-black text-dark-400 uppercase tracking-widest opacity-60">
+                {group.title}
+              </div>
+            ) : (
+              groupIndex > 0 && <div className="h-px bg-blue-100/60 my-2 mx-1" />
+            )}
+            {group.items.map((item) => {
+              const Icon = item.icon
+              const active = isActive(item.href)
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  title={collapsed ? item.label : undefined}
+                  target={item.target}
+                  rel={item.rel}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 group border",
+                    active 
+                      ? "bg-brand-50 border-brand-100 text-brand-500" 
+                      : "border-transparent text-dark-500 hover:bg-brand-50/50 hover:text-brand-500"
+                  )}
+                >
+                  <Icon
+                    size={20}
+                    className={cn("flex-shrink-0", active ? "text-brand-500" : "text-dark-300 group-hover:text-brand-500")}
+                  />
+                  {!collapsed && (
+                    <span className="text-sm font-bold truncate tracking-tight">{item.label}</span>
+                  )}
+                  {active && !collapsed && (
+                    <div className="ml-auto w-1.5 h-1.5 rounded-full pulse-dot bg-brand-500" />
+                  )}
+                </Link>
+              )
+            })}
+          </div>
+        ))}
       </nav>
 
       {/* Footer / Settings */}
