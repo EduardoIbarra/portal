@@ -19,6 +19,7 @@ import {
   Phone
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { createSolicitudAction } from '@/app/actions/solicitudes'
 
 // Mexico states list
 const ESTADOS_MEXICO = [
@@ -241,21 +242,16 @@ export default function RequestLetterClient({ profile, clientInfo }: RequestLett
     setIsSubmitting(true)
 
     try {
-      const { data, error: submitError } = await supabase
-        .from('solicitudes_carta_distribucion')
-        .insert({
-          client_id: clientInfo?.id || profile.client_id,
-          user_id: profile.id,
-          lineas_producto: selectedLines,
-          estados: selectedStates,
-          hospital: finalHospital,
-          hospital_email: hospitalEmail.trim() || null,
-          hospital_phone: hospitalPhone.trim() || null,
-          status: 'pending'
-        })
-        .select()
+      const res = await createSolicitudAction({
+        clientId: clientInfo?.id || profile.client_id,
+        lineasProducto: selectedLines,
+        estados: selectedStates,
+        hospital: finalHospital,
+        hospitalEmail: hospitalEmail.trim() || undefined,
+        hospitalPhone: hospitalPhone.trim() || undefined
+      })
 
-      if (submitError) throw submitError
+      if (!res.success) throw new Error('Ocurrió un error al procesar tu solicitud.')
 
       setSuccess(true)
       setTimeout(() => {
