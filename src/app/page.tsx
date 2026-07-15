@@ -250,31 +250,33 @@ export default async function Dashboard() {
               <p className="text-brand-100 mb-6 md:mb-8 font-medium text-sm md:text-base">{dict.dashboard.letterDescription}</p>
               <div className="flex flex-col sm:flex-row gap-3">
                 {latestCartaUrl ? (
-                  <a 
-                    href={latestCartaUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="bg-white text-brand-500 px-6 py-3 rounded-xl font-black inline-flex items-center justify-center gap-2 hover:bg-brand-50 transition-all active:scale-95 shadow-lg text-sm md:text-base flex-1 sm:flex-initial"
-                  >
-                    {dict.common.download}
-                    <ArrowUpRight className="w-5 h-5" />
-                  </a>
+                  <>
+                    <a 
+                      href={latestCartaUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="bg-white text-brand-500 px-6 py-3 rounded-xl font-black inline-flex items-center justify-center gap-2 hover:bg-brand-50 transition-all active:scale-95 shadow-lg text-sm md:text-base flex-1 sm:flex-initial"
+                    >
+                      {dict.common.download}
+                      <ArrowUpRight className="w-5 h-5" />
+                    </a>
+                    <Link 
+                      href="/distributor-letter/request"
+                      className="bg-brand-600 hover:bg-brand-700 text-white border border-brand-400/50 px-6 py-3 rounded-xl font-black inline-flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg text-sm md:text-base flex-1 sm:flex-initial"
+                    >
+                      Solicitar Carta
+                      <ArrowUpRight className="w-5 h-5" />
+                    </Link>
+                  </>
                 ) : (
                   <Link 
-                    href="/distributor-letter"
-                    className="bg-white text-brand-500 px-6 py-3 rounded-xl font-black inline-flex items-center justify-center gap-2 hover:bg-brand-50 transition-all active:scale-95 shadow-lg text-sm md:text-base flex-1 sm:flex-initial"
+                    href="/distributor-letter/request"
+                    className="bg-white text-brand-500 px-6 py-3 rounded-xl font-black inline-flex items-center justify-center gap-2 hover:bg-brand-50 transition-all active:scale-95 shadow-lg text-sm md:text-base w-full"
                   >
-                    Ver Cartas
+                    Solicitar Carta
                     <ArrowUpRight className="w-5 h-5" />
                   </Link>
                 )}
-                <Link 
-                  href="/distributor-letter/request"
-                  className="bg-brand-600 hover:bg-brand-700 text-white border border-brand-400/50 px-6 py-3 rounded-xl font-black inline-flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg text-sm md:text-base flex-1 sm:flex-initial"
-                >
-                  Solicitar Carta
-                  <ArrowUpRight className="w-5 h-5" />
-                </Link>
               </div>
             </div>
             <div className="absolute -right-8 -bottom-8 opacity-10 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
