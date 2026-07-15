@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { useHospitals } from '@/hooks/useHospitals'
 import { 
@@ -14,7 +14,9 @@ import {
   Loader2, 
   Building,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Mail,
+  Phone
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -54,9 +56,14 @@ export default function RequestLetterClient({ profile, clientInfo }: RequestLett
   const [selectedStates, setSelectedStates] = useState<string[]>([])
   const [hospitalInput, setHospitalInput] = useState('')
   const [selectedHospitalId, setSelectedHospitalId] = useState<string | null>(null)
+  const [hospitalEmail, setHospitalEmail] = useState('')
+  const [hospitalPhone, setHospitalPhone] = useState('')
 
   // Autocomplete source from database
   const [destinatarios, setDestinatarios] = useState<string[]>([])
+
+  const searchParams = useSearchParams()
+  const cloneId = searchParams.get('clone')
 
   // UI dropdown states
   const [stateSearch, setStateSearch] = useState('')
@@ -71,6 +78,28 @@ export default function RequestLetterClient({ profile, clientInfo }: RequestLett
 
   const stateDropdownRef = useRef<HTMLDivElement>(null)
   const hospitalDropdownRef = useRef<HTMLDivElement>(null)
+
+  // Load clone request details if cloneId query parameter is present
+  useEffect(() => {
+    async function loadClonedRequest() {
+      if (!cloneId) return
+      const { data, error } = await supabase
+        .from('solicitudes_carta_distribucion')
+        .select('*')
+        .eq('id', cloneId)
+        .single()
+      
+      if (data && !error) {
+        setSelectedLines(data.lineas_producto || [])
+        setSelectedStates(data.estados || [])
+        setHospitalInput(data.hospital || '')
+        setHospitalSearch(data.hospital || '')
+        setHospitalEmail(data.hospital_email || '')
+        setHospitalPhone(data.hospital_phone || '')
+      }
+    }
+    loadClonedRequest()
+  }, [cloneId, supabase])
 
   // Fetch unique destinatarios from cartas_distribucion
   useEffect(() => {
@@ -220,6 +249,8 @@ export default function RequestLetterClient({ profile, clientInfo }: RequestLett
           lineas_producto: selectedLines,
           estados: selectedStates,
           hospital: finalHospital,
+          hospital_email: hospitalEmail.trim() || null,
+          hospital_phone: hospitalPhone.trim() || null,
           status: 'pending'
         })
         .select()
@@ -476,6 +507,41 @@ export default function RequestLetterClient({ profile, clientInfo }: RequestLett
                 )}
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Hospital Contact Info */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="space-y-3">
+            <label className="block text-xs font-black uppercase tracking-widest text-dark-400">
+              Correo Electrónico del Hospital (Opcional)
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-dark-400" />
+              <input
+                type="email"
+                placeholder="ejemplo@hospital.com"
+                value={hospitalEmail}
+                onChange={(e) => setHospitalEmail(e.target.value)}
+                className="crm-input pl-10 py-3.5"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <label className="block text-xs font-black uppercase tracking-widest text-dark-400">
+              Teléfono del Hospital (Opcional)
+            </label>
+            <div className="relative">
+              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-dark-400" />
+              <input
+                type="tel"
+                placeholder="+52 55 1234 5678"
+                value={hospitalPhone}
+                onChange={(e) => setHospitalPhone(e.target.value)}
+                className="crm-input pl-10 py-3.5"
+              />
+            </div>
           </div>
         </div>
 

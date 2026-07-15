@@ -270,6 +270,8 @@ export interface Database {
           lineas_producto: string[]
           estados: string[]
           hospital: string
+          hospital_email: string | null
+          hospital_phone: string | null
           status: 'pending' | 'approved' | 'rejected'
         }
         Insert: {
@@ -281,6 +283,8 @@ export interface Database {
           lineas_producto: string[]
           estados: string[]
           hospital: string
+          hospital_email?: string | null
+          hospital_phone?: string | null
           status?: 'pending' | 'approved' | 'rejected'
         }
         Update: {
@@ -292,6 +296,8 @@ export interface Database {
           lineas_producto?: string[]
           estados?: string[]
           hospital?: string
+          hospital_email?: string | null
+          hospital_phone?: string | null
           status?: 'pending' | 'approved' | 'rejected'
         }
       }

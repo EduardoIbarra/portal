@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { FileCheck, Calendar, Hash, Download, Plus } from 'lucide-react'
+import { FileCheck, Calendar, Hash, Download, Plus, Copy } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface DistributorLetterClientProps {
@@ -212,8 +212,15 @@ export default function DistributorLetterClient({ cartas, solicitudes }: Distrib
                       )}
                     </div>
 
-                    <div className="pt-4 border-t border-border-2 mt-4 text-[10px] text-dark-400 font-bold">
-                      Solicitado el: {new Date(sol.created_at).toLocaleDateString()}
+                    <div className="pt-4 border-t border-border-2 mt-4 text-[10px] text-dark-400 font-bold flex items-center justify-between gap-4">
+                      <span>Solicitado el: {new Date(sol.created_at).toLocaleDateString()}</span>
+                      <Link 
+                        href={`/distributor-letter/request?clone=${sol.id}`}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-surface-2 border border-border text-dark-600 hover:border-brand-300 hover:text-brand-600 transition-colors shadow-sm font-semibold text-[10px]"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                        Clonar
+                      </Link>
                     </div>
                   </div>
                 )
