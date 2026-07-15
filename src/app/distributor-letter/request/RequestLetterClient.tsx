@@ -47,13 +47,16 @@ interface RequestLetterClientProps {
 export default function RequestLetterClient({ profile, clientInfo }: RequestLetterClientProps) {
   const router = useRouter()
   const supabase = createClient()
-  const { hospitals, loading: loadingHopsitals } = useHospitals()
+  const { hospitals, loading: loadingHospitals } = useHospitals()
 
   // Form states
   const [selectedLines, setSelectedLines] = useState<string[]>([])
   const [selectedStates, setSelectedStates] = useState<string[]>([])
   const [hospitalInput, setHospitalInput] = useState('')
   const [selectedHospitalId, setSelectedHospitalId] = useState<string | null>(null)
+
+  // Autocomplete source from database
+  const [destinatarios, setDestinatarios] = useState<string[]>([])
 
   // UI dropdown states
   const [stateSearch, setStateSearch] = useState('')
@@ -68,6 +71,42 @@ export default function RequestLetterClient({ profile, clientInfo }: RequestLett
 
   const stateDropdownRef = useRef<HTMLDivElement>(null)
   const hospitalDropdownRef = useRef<HTMLDivElement>(null)
+
+  // Fetch unique destinatarios from cartas_distribucion
+  useEffect(() => {
+    async function fetchDestinatarios() {
+      const { data } = await supabase
+        .from('cartas_distribucion')
+        .select('destinatario')
+      
+      if (data) {
+        const uniqueDest = new Set<string>()
+        data.forEach((item: any) => {
+          const val = item.destinatario
+          if (val && typeof val === 'string') {
+            const cleanVal = val.trim()
+            const norm = cleanVal.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").trim()
+            if (
+              norm !== 'a quien corresponda' && 
+              norm !== 'aquiencorresponda' && 
+              norm !== 'a quiien corresponda' && 
+              norm !== 'test' && 
+              norm !== ''
+            ) {
+              // Strip trailing period if present
+              let formatted = cleanVal
+              if (formatted.endsWith('.')) {
+                formatted = formatted.substring(0, formatted.length - 1).trim()
+              }
+              uniqueDest.add(formatted)
+            }
+          }
+        })
+        setDestinatarios(Array.from(uniqueDest).sort((a, b) => a.localeCompare(b)))
+      }
+    }
+    fetchDestinatarios()
+  }, [supabase])
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -102,8 +141,38 @@ export default function RequestLetterClient({ profile, clientInfo }: RequestLett
     state.toLowerCase().includes(stateSearch.toLowerCase())
   )
 
+  // Combine and deduplicate hospitals and destinatarios
+  const combinedHospitals = (() => {
+    const seen = new Set<string>()
+    const list: Array<{ id: string; name: string; info: string }> = []
+    
+    // Add unique destinatarios first
+    destinatarios.forEach(name => {
+      const key = name.toLowerCase().replace(/[^a-z0-9]/g, '')
+      if (!seen.has(key)) {
+        seen.add(key)
+        list.push({ id: `dest-${name}`, name, info: 'Destinatario frecuente' })
+      }
+    })
+    
+    // Add database hospitals
+    hospitals.forEach(h => {
+      const key = h.name.toLowerCase().replace(/[^a-z0-9]/g, '')
+      if (!seen.has(key)) {
+        seen.add(key)
+        list.push({ 
+          id: h.id, 
+          name: h.name, 
+          info: h.state ? `${h.city || ''}, ${h.state}` : 'Hospital' 
+        })
+      }
+    })
+    
+    return list
+  })()
+
   // Filtered hospitals based on search
-  const filteredHospitals = hospitals.filter(h => 
+  const filteredHospitals = combinedHospitals.filter(h => 
     h.name.toLowerCase().includes(hospitalSearch.toLowerCase())
   )
 
@@ -371,7 +440,7 @@ export default function RequestLetterClient({ profile, clientInfo }: RequestLett
               )}
             </div>
 
-            {isHospitalDropdownOpen && (hospitalSearch.trim() !== '' || hospitals.length > 0) && (
+            {isHospitalDropdownOpen && (hospitalSearch.trim() !== '' || destinatarios.length > 0 || hospitals.length > 0) && (
               <div className="absolute z-20 mt-2 w-full bg-white border border-border rounded-xl shadow-xl max-h-60 overflow-y-auto divide-y divide-border-2 scrollbar-thin">
                 {filteredHospitals.map(h => (
                   <div
@@ -382,7 +451,7 @@ export default function RequestLetterClient({ profile, clientInfo }: RequestLett
                     <Building className="w-4 h-4 text-brand-500" />
                     <div>
                       <p className="text-sm font-bold text-dark">{h.name}</p>
-                      {h.state && <p className="text-[10px] text-dark-400 font-semibold">{h.city || ''}, {h.state}</p>}
+                      <p className="text-[10px] text-dark-400 font-semibold">{h.info}</p>
                     </div>
                   </div>
                 ))}
