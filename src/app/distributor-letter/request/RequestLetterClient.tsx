@@ -514,7 +514,7 @@ export default function RequestLetterClient({ profile, clientInfo }: RequestLett
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="space-y-3">
             <label className="block text-xs font-black uppercase tracking-widest text-dark-400">
-              Correo Electrónico del Hospital (Opcional)
+              Email del Hospital (Opcional)
             </label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-dark-400" />
