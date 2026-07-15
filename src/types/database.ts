@@ -260,6 +260,41 @@ export interface Database {
           created_at?: string
         }
       }
+      solicitudes_carta_distribucion: {
+        Row: {
+          id: string
+          created_at: string
+          updated_at: string
+          client_id: string
+          user_id: string
+          lineas_producto: string[]
+          estados: string[]
+          hospital: string
+          status: 'pending' | 'approved' | 'rejected'
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          client_id: string
+          user_id: string
+          lineas_producto: string[]
+          estados: string[]
+          hospital: string
+          status?: 'pending' | 'approved' | 'rejected'
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          client_id?: string
+          user_id?: string
+          lineas_producto?: string[]
+          estados?: string[]
+          hospital?: string
+          status?: 'pending' | 'approved' | 'rejected'
+        }
+      }
     }
   }
 }
