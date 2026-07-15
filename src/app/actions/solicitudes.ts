@@ -1,11 +1,11 @@
 'use server'
 
-import { createAdminClient } from '@/lib/supabase-server'
+import { createClient } from '@/lib/supabase-server'
 import { getProfile } from '@/lib/auth-utils'
 
 async function getStaffNumbersForLetters(): Promise<string[]> {
   try {
-    const supabase = createAdminClient()
+    const supabase = await createClient()
     const { data: configSetting } = await supabase
       .from('app_settings')
       .select('value')
@@ -152,7 +152,7 @@ export async function createSolicitudAction(payload: {
     throw new Error('Not authenticated')
   }
 
-  const supabase = createAdminClient()
+  const supabase = await createClient()
   
   // 1. Fetch client information for the notification
   const { data: clientInfo } = await supabase
