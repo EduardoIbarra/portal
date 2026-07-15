@@ -40,7 +40,26 @@ export default async function DistributorLetterPage() {
         .eq('client_id', clientInfo.id)
         .order('created_at', { ascending: false })
 
-      if (solicitudesData) solicitudes = solicitudesData
+      if (solicitudesData) {
+        solicitudes = solicitudesData
+
+        // 5. Query actions related to those requests
+        if (solicitudesData.length > 0) {
+          const { data: accionesData } = await supabase
+            .from('solicitud_carta_acciones')
+            .select('*')
+            .in('solicitud_id', solicitudesData.map(s => s.id))
+            .order('created_at', { ascending: false })
+          
+          if (accionesData) {
+            // Attach actions directly to the requests for easier consumption
+            solicitudes = solicitudesData.map(sol => ({
+              ...sol,
+              acciones: accionesData.filter(acc => acc.solicitud_id === sol.id)
+            }))
+          }
+        }
+      }
     }
   }
 

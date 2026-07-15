@@ -187,6 +187,29 @@ export default function DistributorLetterClient({ cartas, solicitudes }: Distrib
                           {sol.estados.join(', ')}
                         </p>
                       </div>
+
+                      {sol.acciones && sol.acciones.length > 0 && (
+                        <div className="pt-3 mt-3 border-t border-dashed border-border-2 space-y-2">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-dark-300">Comentarios / Acciones</p>
+                          <div className="space-y-2">
+                            {sol.acciones.map((acc: any) => (
+                              <div key={acc.id} className="text-xs bg-surface-2 rounded-lg p-2.5 border border-border">
+                                <div className="flex items-center justify-between gap-2 mb-1">
+                                  <span className={cn(
+                                    "text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded",
+                                    acc.action === 'reject' ? 'bg-danger-bg text-danger' : 
+                                    acc.action === 'approve' ? 'bg-success-bg text-success' : 'bg-brand-50 text-brand-600'
+                                  )}>
+                                    {acc.action === 'reject' ? 'Rechazada' : acc.action === 'approve' ? 'Aprobada' : acc.action}
+                                  </span>
+                                  <span className="text-[9px] text-dark-400 font-semibold">{new Date(acc.created_at).toLocaleDateString()}</span>
+                                </div>
+                                {acc.comment && <p className="text-dark-600 font-medium leading-normal">{acc.comment}</p>}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="pt-4 border-t border-border-2 mt-4 text-[10px] text-dark-400 font-bold">

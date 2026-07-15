@@ -295,6 +295,35 @@ export interface Database {
           status?: 'pending' | 'approved' | 'rejected'
         }
       }
+      solicitud_carta_acciones: {
+        Row: {
+          id: string
+          created_at: string
+          solicitud_id: string
+          user_id: string
+          action: string
+          comment: string | null
+          metadata: any | null
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          solicitud_id: string
+          user_id: string
+          action: string
+          comment?: string | null
+          metadata?: any | null
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          solicitud_id?: string
+          user_id?: string
+          action?: string
+          comment?: string | null
+          metadata?: any | null
+        }
+      }
     }
   }
 }
